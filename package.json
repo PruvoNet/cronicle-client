@@ -26,9 +26,9 @@
   "keywords": [
     "cronicle",
     "client",
-    "sqs",
     "typescript",
-    "node"
+    "node",
+    "api"
   ],
   "author": "Regev Brody <regevbr@gmail.com>",
   "license": "ISC",

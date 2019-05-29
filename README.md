@@ -35,7 +35,7 @@ import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets,
 
 const scheduler = new CronicleClient({
   masterUrl: 'http://localhost:3012',
-  apiKey: '<your key>',
+  apiKey: '<your api key>',
 });
 
 scheduler.createEvent({
@@ -101,7 +101,7 @@ export enum Targets {
 
 const scheduler = new CronicleClient<Categories, Targets, Plugins>({
   masterUrl: 'http://localhost:3012',
-  apiKey: '<your key>',
+  apiKey: '<your api key>',
 });
 
 scheduler.createEvent({
@@ -132,7 +132,7 @@ TBD
 
 ## Versions
 
-Squiss supports Node 6 LTS and higher.
+Cronicle client supports Node 6 LTS and higher.
 
 ## Contributing
 
