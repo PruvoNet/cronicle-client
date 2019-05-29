@@ -96,7 +96,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
             throw new Error('cronicle api key is required');
         }
         this.baseUrl = `${opts.masterUrl.replace(/\/$/, '')}/api/app`;
-        this.apiVersion = opts.apiVersion || Index.DEFAULT_API_VERSION;
+        this.apiVersion = opts.apiVersion || CronicleClient.DEFAULT_API_VERSION;
         this.headers = {
             'X-API-Key': opts.apiKey,
         };
