@@ -7,8 +7,6 @@ export type RecursivePartial<T> = {
       T[P];
 };
 
-export type StringEnum<T> = Record<keyof T, string>;
-
 export enum NumberedBoolean {
   FALSE = 0,
   TRUE = 1,

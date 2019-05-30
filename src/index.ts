@@ -22,6 +22,12 @@ import {Moment} from 'moment';
 import MomentNamespace = require('moment');
 import {ITiming} from './DataTypes';
 
+export * from './RequestResponseTypes';
+export * from './DataTypes';
+export * from './HelperTypes';
+export * from './Plugins';
+export * from './SchedulerError';
+
 export interface ISchedulerOptions {
     masterUrl: string;
     apiKey: string;
