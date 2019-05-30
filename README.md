@@ -30,7 +30,7 @@ If you want to use the timing objects helpers, you must also install `moment`
 ## Quick example
 
 ```typescript
-import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, 
+import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, getUtcTiming, 
  HttpPluginMethods, } from 'cronicle-client';
 
 const scheduler = new CronicleClient({
@@ -44,7 +44,7 @@ scheduler.createEvent({
         enabled: NumberedBoolean.TRUE,
         category: BaseCategories.GENERAL,
         target: BaseTargets.GENERAL,
-        timing: CronicleClient.getUtcTiming('2016-05-26T14:50:50.900Z'),
+        timing: getUtcTiming('2016-05-26T14:50:50.900Z'),
         timezone: 'Etc/UTC',
         params: {
           method: HttpPluginMethods.POST,
@@ -66,7 +66,8 @@ scheduler.createEvent({
 ## Extending with custom types example
 
 ```typescript
-import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean } from 'cronicle-client';
+import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean,
+    getUtcTiming } from 'cronicle-client';
 
 export interface ICustomPluginData {
   duration: string;
@@ -110,7 +111,7 @@ scheduler.createEvent({
         enabled: NumberedBoolean.TRUE,
         category: Categories.TEST_CATEGORY2,
         target: Targets.AWS,
-        timing: CronicleClient.getUtcTiming('2016-05-26T14:50:50.900Z'),
+        timing: getUtcTiming('2016-05-26T14:50:50.900Z'),
         timezone: 'Etc/UTC',
         params: {
           duration: '60',

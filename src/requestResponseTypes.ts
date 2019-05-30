@@ -1,7 +1,7 @@
 'use strict';
 
-import { ICreatedEvent, IEvent, IJob } from './DataTypes';
-import { NumberedBoolean, RecursivePartial } from './HelperTypes';
+import { ICreatedEvent, IEvent, IJob } from './dataTypes';
+import { NumberedBoolean, RecursivePartial } from './helperTypes';
 
 export interface ICreateEventRequest<Plugin extends keyof Plugins,
   Plugins,

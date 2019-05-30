@@ -1,6 +1,6 @@
 'use strict';
 
-import { NumberedBoolean } from './HelperTypes';
+import { NumberedBoolean } from './helperTypes';
 
 export enum HttpPluginMethods {
   POST = 'POST',
