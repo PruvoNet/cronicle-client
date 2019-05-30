@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v0.0.4
+
+[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.3...v0.0.4)
+
+### Fixed
+
+- Reduced `request-promise` min version
+
 ## v0.0.3
 
 [diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.2...v0.0.3)

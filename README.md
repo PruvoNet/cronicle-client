@@ -22,7 +22,7 @@ npm install cronicle-client
 ```
 
 --NOTICE--  
-`request-promise` is a peer dependency and must be installed by you (>=3.0.0)
+`request-promise` is a peer dependency and must be installed by you (>=1.0.0)
 
 --NOTICE--  
 If you want to use the timing objects helpers, you must also install `moment`
