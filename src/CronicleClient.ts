@@ -3,7 +3,6 @@
 import * as qs from 'querystring';
 import * as request from 'request-promise';
 import {SchedulerError} from './SchedulerError';
-import {IPlugins} from './plugins';
 import {
     IAbortJobRequest,
     IBasicResponse,
@@ -18,6 +17,7 @@ import {
     IUpdateEventRequest,
     IUpdateJobRequest,
 } from './requestResponseTypes';
+import {IBasePlugins} from './plugins';
 
 export interface ISchedulerOptions {
     masterUrl: string;
@@ -45,7 +45,7 @@ interface IBody {
 
 export class CronicleClient<Categories extends string = BaseCategories,
     Targets extends string = BaseTargets,
-    Plugins = IPlugins> {
+    Plugins = IBasePlugins> {
 
     private static readonly DEFAULT_API_VERSION = 'v1';
 

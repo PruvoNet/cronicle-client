@@ -7,8 +7,8 @@ import {
     SchedulerError,
     NumberedBoolean,
     BaseCategories,
-    BaseTargets, IPlugins,
-    ICreateEventRequest, IHttpPluginData, IShellPluginData, ITestPluginData
+    BaseTargets,
+    IHttpPluginData, IShellPluginData, ITestPluginData, basePlugins
 } from '../../dist/';
 import moment = require('moment');
 import {expect} from 'chai';
@@ -17,6 +17,7 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 // @ts-ignore
 import * as timezoneMock from 'timezone-mock';
+import {IPluginNames} from '../../src';
 
 const requestStub = sinon.stub();
 (requestStub as any)['@global'] = true;
@@ -146,12 +147,12 @@ describe('index', () => {
                     TEST_CATEGORY2 = 'cjw6l8mnb02',
                 }
                 const client = new cronicleClientStubbed<Categories>({masterUrl, apiKey});
-                const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, Categories> = {
+                const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
                     category: Categories.TEST_CATEGORY,
                     target: BaseTargets.MAIN,
-                    plugin: 'shellplug',
+                    plugin: basePlugins.shellplug,
                     params: {
                         script: 'myScript',
                         annotate: NumberedBoolean.FALSE,
@@ -179,12 +180,12 @@ describe('index', () => {
                     GCP = 'gcpgrp',
                 }
                 const client = new cronicleClientStubbed<Categories, Targets>({masterUrl, apiKey});
-                const request: ICreateEventRequest<'shellplug', IPlugins, Targets, Categories> = {
+                const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
                     category: Categories.TEST_CATEGORY2,
                     target: Targets.AWS,
-                    plugin: 'shellplug',
+                    plugin: basePlugins.shellplug,
                     params: {
                         script: 'myScript',
                         annotate: NumberedBoolean.FALSE,
@@ -224,13 +225,19 @@ describe('index', () => {
                     // Custom plugins
                     mycustomplug: ICustomPluginData;
                 }
+                const plugins: IPluginNames<Plugins> = {
+                    urlplug: 'urlplug',
+                    shellplug: 'shellplug',
+                    testplug: 'testplug',
+                    mycustomplug: 'mycustomplug',
+                };
                 const client = new cronicleClientStubbed<Categories, Targets, Plugins>({masterUrl, apiKey});
-                const request: ICreateEventRequest<'mycustomplug', Plugins, Targets, Categories> = {
+                const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
                     category: Categories.TEST_CATEGORY2,
                     target: Targets.AWS,
-                    plugin: 'mycustomplug',
+                    plugin: plugins.mycustomplug,
                     params: {
                         duration: 'myDiration',
                         action: 'myAction',
@@ -547,12 +554,12 @@ limit=${limit}&offset=${offset}`,
                     const client = new cronicleClientStubbed({masterUrl, apiKey});
                     const response = {code: 0};
                     requestStub.resolves(response);
-                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                    const request = {
                         title: 'myTitle',
                         enabled: NumberedBoolean.TRUE,
                         category: BaseCategories.GENERAL,
                         target: BaseTargets.MAIN,
-                        plugin: 'shellplug',
+                        plugin: basePlugins.shellplug,
                         params: {
                             script: 'myScript',
                             annotate: NumberedBoolean.FALSE,
@@ -581,12 +588,12 @@ limit=${limit}&offset=${offset}`,
                     requestStub.onCall(0).resolves({code: 'not found', description: 'event with title not found'});
                     requestStub.onCall(1).resolves(response);
                     const title = 'myTitle';
-                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                    const request = {
                         title,
                         enabled: NumberedBoolean.TRUE,
                         category: BaseCategories.GENERAL,
                         target: BaseTargets.MAIN,
-                        plugin: 'shellplug',
+                        plugin: basePlugins.shellplug,
                         params: {
                             script: 'myScript',
                             annotate: NumberedBoolean.FALSE,
@@ -624,12 +631,12 @@ limit=${limit}&offset=${offset}`,
                     const client = new cronicleClientStubbed({masterUrl, apiKey});
                     requestStub.resolves( {code: 0});
                     const title = 'myTitle';
-                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                    const request = {
                         title,
                         enabled: NumberedBoolean.TRUE,
                         category: BaseCategories.GENERAL,
                         target: BaseTargets.MAIN,
-                        plugin: 'shellplug',
+                        plugin: basePlugins.shellplug,
                         params: {
                             script: 'myScript',
                             annotate: NumberedBoolean.FALSE,
@@ -663,12 +670,12 @@ limit=${limit}&offset=${offset}`,
                     const code = 'myCode';
                     const description = 'mydDescription';
                     requestStub.resolves({code, description});
-                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                    const request = {
                         title: 'myTitle',
                         enabled: NumberedBoolean.TRUE,
                         category: BaseCategories.GENERAL,
                         target: BaseTargets.MAIN,
-                        plugin: 'shellplug',
+                        plugin: basePlugins.shellplug,
                         params: {
                             script: 'myScript',
                             annotate: NumberedBoolean.FALSE,
@@ -690,12 +697,12 @@ limit=${limit}&offset=${offset}`,
                     const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
                     const response = {code: 0};
                     requestStub.resolves(response);
-                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                    const request = {
                         title: 'myTitle',
                         enabled: NumberedBoolean.TRUE,
                         category: BaseCategories.GENERAL,
                         target: BaseTargets.MAIN,
-                        plugin: 'shellplug',
+                        plugin: basePlugins.shellplug,
                         params: {
                             script: 'myScript',
                             annotate: NumberedBoolean.FALSE,

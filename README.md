@@ -31,7 +31,7 @@ If you want to use the timing objects helpers, you must also install `moment`
 
 ```typescript
 import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, getUtcTiming, 
- HttpPluginMethods, } from 'cronicle-client';
+ HttpPluginMethods, basePlugins} from 'cronicle-client';
 
 const scheduler = new CronicleClient({
   masterUrl: 'http://localhost:3012',
@@ -39,7 +39,7 @@ const scheduler = new CronicleClient({
 });
 
 scheduler.createEvent({
-        plugin: 'urlplug',
+        plugin: basePlugins.urlplug,
         title: 'test event1',
         enabled: NumberedBoolean.TRUE,
         category: BaseCategories.GENERAL,
@@ -67,7 +67,7 @@ scheduler.createEvent({
 
 ```typescript
 import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean,
-    getUtcTiming } from 'cronicle-client';
+    getUtcTiming, IPluginNames } from 'cronicle-client';
 
 export interface ICustomPluginData {
   duration: string;
@@ -100,13 +100,20 @@ export enum Targets {
     GCP = 'gcpgrp',
 }
 
+const plugins: IPluginNames<Plugins> = {
+    urlplug: 'urlplug',
+    shellplug: 'shellplug',
+    testplug: 'testplug',
+    mycustomplug: 'mycustomplug',
+};
+
 const scheduler = new CronicleClient<Categories, Targets, Plugins>({
   masterUrl: 'http://localhost:3012',
   apiKey: '<your api key>',
 });
 
 scheduler.createEvent({
-        plugin: 'mycustomplug',
+        plugin: plugins.mycustomplug,
         title: 'test event1',
         enabled: NumberedBoolean.TRUE,
         category: Categories.TEST_CATEGORY2,

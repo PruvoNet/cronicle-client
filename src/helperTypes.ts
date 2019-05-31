@@ -7,6 +7,12 @@ export type RecursivePartial<T> = {
       T[P];
 };
 
+export type PluginNameType<Plugin, Plugins> = Plugin extends keyof Plugins ? Plugin : never;
+
+export type IPluginNames<Plugins> =  {
+  [k in keyof Plugins]: PluginNameType<k, Plugins>;
+};
+
 export enum NumberedBoolean {
   FALSE = 0,
   TRUE = 1,
