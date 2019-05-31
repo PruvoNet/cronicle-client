@@ -2,7 +2,7 @@
 
 import {Moment} from 'moment';
 import MomentNamespace = require('moment');
-import {ITiming} from './dataTypes';
+import {Days, Hours, ITiming, Minutes, Months} from './dataTypes';
 
 let _moment: typeof MomentNamespace;
 
@@ -14,10 +14,10 @@ const _getMoment = (): typeof MomentNamespace => {
 const _getTiming = (date: Moment): ITiming => {
     return {
         years: [date.get('year')],
-        months: [date.get('month') + 1],
-        days: [date.get('date')],
-        hours: [date.get('hour')],
-        minutes: [date.get('minute')],
+        months: [date.get('month') + 1 as Months],
+        days: [date.get('date') as Days],
+        hours: [date.get('hour') as Hours],
+        minutes: [date.get('minute') as Minutes],
     };
 };
 
