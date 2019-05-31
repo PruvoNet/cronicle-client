@@ -248,11 +248,11 @@ getUtcTiming(moment.utc('2016-05-26T14:50:50.900Z');
 Will produce:
 ```json
 { 
-  years: [ 2016 ],
-  months: [ 5 ],
-  days: [ 26 ],
-  hours: [ 14 ],
-  minutes: [ 50 ],
+  "years": [ 2016 ],
+  "months": [ 5 ],
+  "days": [ 26 ],
+  "hours": [ 14 ],
+  "minutes": [ 50 ]
 }
 ```
 

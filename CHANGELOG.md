@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## v0.1.0
 
-[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.3...v0.1.0)
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v0.0.3...v0.1.0)
 
 ### Fixed
 
@@ -22,7 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## v0.0.3
 
-[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.2...v0.0.3)
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v0.0.2...v0.0.3)
 
 ### Fixed
 
@@ -30,7 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## v0.0.2
 
-[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.1...v0.0.2)
+[diff](https://github.com/PruvoNet/scronicle-client/compare/v0.0.1...v0.0.2)
 
 ### Fixed
 
