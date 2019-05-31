@@ -8,7 +8,7 @@ import {
     NumberedBoolean,
     BaseCategories,
     BaseTargets, IPlugins,
-    ICreateEventRequest
+    ICreateEventRequest, IHttpPluginData, IShellPluginData, ITestPluginData
 } from '../../dist/';
 import moment = require('moment');
 import {expect} from 'chai';
@@ -110,11 +110,15 @@ describe('index', () => {
 
     describe('cronicle client', () => {
 
+        beforeEach(() => {
+            requestStub.reset();
+        });
+
         describe('constructor', () => {
 
             it('should fail if no master url is provided', (done) => {
                 try {
-                    new cronicleClientStubbed({apiKey} as any);
+                    new CronicleClient({apiKey} as any);
                 } catch (error) {
                     expect(error.message).to.eql('cronicle master url is required');
                     done();
@@ -123,7 +127,7 @@ describe('index', () => {
 
             it('should fail if no api key is provided', (done) => {
                 try {
-                    new cronicleClientStubbed({masterUrl} as any);
+                    new CronicleClient({masterUrl} as any);
                 } catch (error) {
                     expect(error.message).to.eql('cronicle api key is required');
                     done();
@@ -131,11 +135,114 @@ describe('index', () => {
             });
         });
 
-        describe('methods', () => {
+        describe('typing', () => {
 
-            beforeEach(() => {
-                requestStub.reset();
+            it('should allow extended plugins', () => {
+                enum Categories {
+                    // Default category
+                    GENERAL = 'general',
+                    // Custom categories...
+                    TEST_CATEGORY = 'cjw6g085901',
+                    TEST_CATEGORY2 = 'cjw6l8mnb02',
+                }
+                const client = new cronicleClientStubbed<Categories>({masterUrl, apiKey});
+                const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, Categories> = {
+                    title: 'myTitle',
+                    enabled: NumberedBoolean.TRUE,
+                    category: Categories.TEST_CATEGORY,
+                    target: BaseTargets.MAIN,
+                    plugin: 'shellplug',
+                    params: {
+                        script: 'myScript',
+                        annotate: NumberedBoolean.FALSE,
+                        json: NumberedBoolean.TRUE,
+                    },
+                    log_max_size: 30,
+                };
+                client.createEvent(request);
             });
+
+            it('should allow extended targets', () => {
+                enum Categories {
+                    // Default category
+                    GENERAL = 'general',
+                    // Custom categories...
+                    TEST_CATEGORY = 'cjw6g085901',
+                    TEST_CATEGORY2 = 'cjw6l8mnb02',
+                }
+                enum Targets {
+                    // Default targets...
+                    ALL = 'allgrp',
+                    MAIN = 'maingrp',
+                    // Custom targets...
+                    AWS = 'awsgrp',
+                    GCP = 'gcpgrp',
+                }
+                const client = new cronicleClientStubbed<Categories, Targets>({masterUrl, apiKey});
+                const request: ICreateEventRequest<'shellplug', IPlugins, Targets, Categories> = {
+                    title: 'myTitle',
+                    enabled: NumberedBoolean.TRUE,
+                    category: Categories.TEST_CATEGORY2,
+                    target: Targets.AWS,
+                    plugin: 'shellplug',
+                    params: {
+                        script: 'myScript',
+                        annotate: NumberedBoolean.FALSE,
+                        json: NumberedBoolean.TRUE,
+                    },
+                    log_max_size: 30,
+                };
+                client.createEvent(request);
+            });
+
+            it('should allow extended plugins', () => {
+                enum Categories {
+                    // Default category
+                    GENERAL = 'general',
+                    // Custom categories...
+                    TEST_CATEGORY = 'cjw6g085901',
+                    TEST_CATEGORY2 = 'cjw6l8mnb02',
+                }
+                enum Targets {
+                    // Default targets...
+                    ALL = 'allgrp',
+                    MAIN = 'maingrp',
+                    // Custom targets...
+                    AWS = 'awsgrp',
+                    GCP = 'gcpgrp',
+                }
+                interface ICustomPluginData {
+                    duration: string;
+                    action: string;
+                }
+
+                interface Plugins {
+                    // Default plugins
+                    urlplug: IHttpPluginData;
+                    shellplug: IShellPluginData;
+                    testplug: ITestPluginData;
+                    // Custom plugins
+                    mycustomplug: ICustomPluginData;
+                }
+                const client = new cronicleClientStubbed<Categories, Targets, Plugins>({masterUrl, apiKey});
+                const request: ICreateEventRequest<'mycustomplug', Plugins, Targets, Categories> = {
+                    title: 'myTitle',
+                    enabled: NumberedBoolean.TRUE,
+                    category: Categories.TEST_CATEGORY2,
+                    target: Targets.AWS,
+                    plugin: 'mycustomplug',
+                    params: {
+                        duration: 'myDiration',
+                        action: 'myAction',
+                    },
+                    log_max_size: 30,
+                };
+                client.createEvent(request);
+            });
+
+        });
+
+        describe('methods', () => {
 
             describe('get event', () => {
 
