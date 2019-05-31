@@ -6,6 +6,11 @@
 [![dependencies Status](https://david-dm.org/PruvoNet/cronicle-client/status.svg)](https://david-dm.org/PruvoNet/cronicle-client)
 [![devDependencies Status](https://david-dm.org/PruvoNet/cronicle-client/dev-status.svg)](https://david-dm.org/PruvoNet/cronicle-client?type=dev)
 
+<p align="center">
+  <img src="https://github.com/PruvoNet/cronicle-client/blob/master/.github/logo.png?raw=true" />
+</p>
+
+
 # Cronicle client 
 Light [Croncile](https://github.com/jhuckaby/Cronicle) node client with full TypeScript support
 
