@@ -1,6 +1,15 @@
 'use strict';
 
-import {getUtcTiming, getTiming, CronicleClient, SchedulerError} from '../../dist/';
+import {
+    getUtcTiming,
+    getTiming,
+    CronicleClient,
+    SchedulerError,
+    NumberedBoolean,
+    BaseCategories,
+    BaseTargets, IPlugins,
+    ICreateEventRequest
+} from '../../dist/';
 import moment = require('moment');
 import {expect} from 'chai';
 import * as proxyquire from 'proxyquire';
@@ -101,10 +110,6 @@ describe('index', () => {
 
     describe('cronicle client', () => {
 
-        beforeEach(() => {
-            requestStub.reset();
-        });
-
         describe('constructor', () => {
 
             it('should fail if no master url is provided', (done) => {
@@ -127,6 +132,10 @@ describe('index', () => {
         });
 
         describe('methods', () => {
+
+            beforeEach(() => {
+                requestStub.reset();
+            });
 
             describe('get event', () => {
 
@@ -207,6 +216,125 @@ describe('index', () => {
                                 json: true,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/get_event/${apiVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+            });
+
+            describe('get schedule', () => {
+
+                it('should get schedule with no params', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    return client.getSchedule()
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_schedule/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get schedule with offset', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const offset = 1;
+                    return client.getSchedule({offset})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_schedule/${defaultVersion}?offset=${offset}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get schedule with limit', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const limit = 1;
+                    return client.getSchedule({limit})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_schedule/${defaultVersion}?limit=${limit}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get schedule with limit and offset', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const limit = 1;
+                    const offset = 1;
+                    return client.getSchedule({limit, offset})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_schedule/${defaultVersion}?\
+limit=${limit}&offset=${offset}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get schedule with error', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const code = 'myCode';
+                    const description = 'mydDescription';
+                    requestStub.resolves({code, description});
+                    client.getSchedule()
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql(code);
+                            expect(error.message).to.eql(description);
+                            done();
+                        });
+                });
+
+                it('should get schedule with custom api version', () => {
+                    const apiVersion = 'v2';
+                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    return client.getSchedule()
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_schedule/${apiVersion}`,
                             });
                             expect(resp).to.eq(response);
                         });
@@ -299,6 +427,325 @@ describe('index', () => {
                                 json: true,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/run_event/${apiVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+            });
+
+            describe('create event', () => {
+
+                it('should create event', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                        title: 'myTitle',
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: 'shellplug',
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    return client.createEvent(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/create_event/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should create event with unique title', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.onCall(0).resolves({code: 'not found', description: 'event with title not found'});
+                    requestStub.onCall(1).resolves(response);
+                    const title = 'myTitle';
+                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                        title,
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: 'shellplug',
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    return client.createEvent(request, true)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: {
+                                    title,
+                                },
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
+                            });
+                            expect(requestStub.getCall(1).args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/create_event/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should create event with error due to duplicate title', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    requestStub.resolves( {code: 0});
+                    const title = 'myTitle';
+                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                        title,
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: 'shellplug',
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    client.createEvent(request, true)
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql('unique');
+                            expect(error.message).to.eql('event already exists');
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: {
+                                    title,
+                                },
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
+                            });
+                            expect(requestStub.getCall(1)).to.eql(null);
+                            done();
+                        });
+                });
+
+                it('should create event with error', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const code = 'myCode';
+                    const description = 'mydDescription';
+                    requestStub.resolves({code, description});
+                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                        title: 'myTitle',
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: 'shellplug',
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    client.createEvent(request)
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql(code);
+                            expect(error.message).to.eql(description);
+                            done();
+                        });
+                });
+
+                it('should create event with custom api version', () => {
+                    const apiVersion = 'v2';
+                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const request: ICreateEventRequest<'shellplug', IPlugins, BaseTargets, BaseCategories> = {
+                        title: 'myTitle',
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: 'shellplug',
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    return client.createEvent(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/create_event/${apiVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+            });
+
+            describe('update event', () => {
+
+                it('should update event with id', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        timeout: 30,
+                        reset_cursor: NumberedBoolean.TRUE,
+                    };
+                    return client.updateEvent(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/update_event/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should update event with error', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const id = 'myId';
+                    const code = 'myCode';
+                    const description = 'mydDescription';
+                    requestStub.resolves({code, description});
+                    client.updateEvent({id})
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql(code);
+                            expect(error.message).to.eql(description);
+                            done();
+                        });
+                });
+
+                it('should update event with custom api version', () => {
+                    const apiVersion = 'v2';
+                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        timeout: 30,
+                        reset_cursor: NumberedBoolean.TRUE,
+                    };
+                    return client.updateEvent(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/update_event/${apiVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+            });
+
+            describe('update job', () => {
+
+                it('should update job with id', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        timeout: 30,
+                        reset_cursor: NumberedBoolean.TRUE,
+                    };
+                    return client.updateJob(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/update_job/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should update job with error', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const id = 'myId';
+                    const code = 'myCode';
+                    const description = 'mydDescription';
+                    requestStub.resolves({code, description});
+                    client.updateJob({id})
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql(code);
+                            expect(error.message).to.eql(description);
+                            done();
+                        });
+                });
+
+                it('should update job with custom api version', () => {
+                    const apiVersion = 'v2';
+                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        timeout: 30,
+                        reset_cursor: NumberedBoolean.TRUE,
+                    };
+                    return client.updateJob(request)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/update_job/${apiVersion}`,
                             });
                             expect(resp).to.eq(response);
                         });
