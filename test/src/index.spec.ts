@@ -33,7 +33,7 @@ const masterUrl = 'http://my.croncicle.com:3012';
 const apiKey = 'myApiKey';
 const defaultVersion = 'v1';
 
-describe('index', () => {
+describe('cronicle client', () => {
 
     describe('timing helpers ', () => {
 
@@ -252,6 +252,28 @@ describe('index', () => {
         describe('methods', () => {
 
             describe('get event', () => {
+
+                it('should get event with id and master url with trailing slash', () => {
+                    const client = new cronicleClientStubbed({masterUrl: `${masterUrl}/`, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const id = 'myId';
+                    return client.getEvent({id})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: {
+                                    id,
+                                },
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
 
                 it('should get event with id', () => {
                     const client = new cronicleClientStubbed({masterUrl, apiKey});

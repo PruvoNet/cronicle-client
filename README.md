@@ -141,6 +141,8 @@ scheduler.createEvent({
 
 ## Documentation
 
+For all api endpoints documentations, please refer to [Cronicle api reference](https://github.com/jhuckaby/Cronicle#api-reference)
+
 TBD
 
 ## Versions
