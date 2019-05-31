@@ -5,13 +5,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
-## v0.0.4
+## v0.1.0
 
-[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.3...v0.0.4)
+[diff](https://github.com/PruvoNet/squiss-ts/compare/v0.0.3...v0.1.0)
 
 ### Fixed
 
 - Reduced `request-promise` min version
+- Finished documentation
+- Finished unit tests
+
+### Added
+
+- More strict typings for the timing object
+- Helper methods to easily reference plugin names
 
 ## v0.0.3
 

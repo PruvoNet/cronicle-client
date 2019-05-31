@@ -30,7 +30,7 @@ npm install cronicle-client
 `request-promise` is a peer dependency and must be installed by you (>=1.0.0)
 
 --NOTICE--  
-If you want to use the timing objects helpers, you must also install `moment`
+If you want to use the timing utils, you must also install `moment`
 
 ## Quick example
 
@@ -74,12 +74,12 @@ scheduler.createEvent({
 import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean,
     getUtcTiming, IPluginNames } from 'cronicle-client';
 
-export interface ICustomPluginData {
+interface ICustomPluginData {
   duration: string;
   action: string;
 }
 
-export interface Plugins {
+interface Plugins {
   // Default plugins
   urlplug: IHttpPluginData;
   shellplug: IShellPluginData;
@@ -88,7 +88,7 @@ export interface Plugins {
   mycustomplug: ICustomPluginData;
 }
 
-export enum Categories {
+enum Categories {
   // Default category
   GENERAL = 'general',
   // Custom categories...
@@ -96,7 +96,7 @@ export enum Categories {
   TEST_CATEGORY2 = 'cjw6l8mnb02',
 }
 
-export enum Targets {
+enum Targets {
     // Default targets...
     ALL = 'allgrp',
     MAIN = 'maingrp',
@@ -143,7 +143,118 @@ scheduler.createEvent({
 
 For all api endpoints documentations, please refer to [Cronicle api reference](https://github.com/jhuckaby/Cronicle#api-reference)
 
-TBD
+### createEvent
+
+When creating an event, there is no unique restriction on the title.  
+While searching for an event using `getEvent`, the
+api allows you to search by title, which is great, bus as of now (cronicle v0.89) it will return a single result.  
+This imposes an issue when you don't enforce a unique title since you will get a random result (see [#186](https://github.com/jhuckaby/Cronicle/issues/186))  
+Until this behaviour is fixed, you can tell the `createEvent` method to enforce title uniquness and it will fail if an event with the provided title already exists.
+
+### Constructor
+
+#### Options
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `masterUrl`    | The full url to the master Cronicle server
+| `apiKey`       | The api key to use (make sure it has relevant permissions enabled)
+| `apiVersion`   | (Optional) override the default api version (`v1`)
+
+#### Typings
+
+The client can  enforce the proper usage of categories, targets and plugins (with their required parameters).  
+This is done using optional generics:  
+
+| Generics Parameter Name  | Description |
+|--------------------------|-------------|
+| `Categories`             | Enum containing the ids of the categories available at you Cronicle server (Defaults to `BaseCategories`)
+| `Targets`                | Enum containing the ids of the targets available at you Cronicle server (Defaults to `BaseTargets`)
+| `Plugins`                | Interface containing mapping between plugin ids and the interface representing their required event params (Defaults to `IBasePlugins`)
+
+#### Examples
+
+Example constructor with defaults:
+```typescript
+const scheduler = new CronicleClient({
+  masterUrl: 'http://localhost:3012',
+  apiKey: '<your api key>',
+});
+```
+
+Example for setting the categories your server supports:
+```typescript
+enum Categories {
+  // Default category
+  GENERAL = 'general',
+  // Custom categories...
+  TEST_CATEGORY = 'cjw6g085901', 
+  TEST_CATEGORY2 = 'cjw6l8mnb02',
+}
+```
+
+Example for setting the targets your server supports:
+```typescript
+enum Targets {
+    // Default targets...
+    ALL = 'allgrp',
+    MAIN = 'maingrp',
+    // Custom targets...
+    AWS = 'awsgrp',
+    GCP = 'gcpgrp',
+}
+```
+
+Example for setting the plugins your server supports:
+```typescript
+interface ICustomPluginData {
+  duration: string;
+  action: string;
+}
+
+interface Plugins {
+  // Default plugins
+  urlplug: IHttpPluginData;
+  shellplug: IShellPluginData;
+  testplug: ITestPluginData;
+  // Custom plugins
+  mycustomplug: ICustomPluginData;
+}
+```
+
+Example constructor with overrides:
+```typescript
+const scheduler = new CronicleClient<Categories, Targets, Plugins>({
+  masterUrl: 'http://localhost:3012',
+  apiKey: '<your api key>',
+});
+```
+
+### Timing utils
+
+To support a wide variety of scheduling, the [timing object](https://github.com/jhuckaby/Cronicle#event-timing-object)
+an be very cumbersome...  
+To make life easier (at least when you just want to schedule an event for a single future run) you can use the 
+`getTiming` and `getUtcTiming` methods:
+
+--NOTICE--  
+If you want to use the timing utils, you MUST `npm install --save moment`
+
+Running:
+```typescript
+getUtcTiming(moment.utc('2016-05-26T14:50:50.900Z');
+```
+
+Will produce:
+```json
+{ 
+  years: [ 2016 ],
+  months: [ 5 ],
+  days: [ 26 ],
+  hours: [ 14 ],
+  minutes: [ 50 ],
+}
+```
 
 ## Versions
 
