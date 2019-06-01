@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v0.2.0
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v0.1.0...v0.2.0)
+
+### Added
+
+- allow unique id enforcement on event creation
+
 ## v0.1.0
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v0.0.3...v0.1.0)

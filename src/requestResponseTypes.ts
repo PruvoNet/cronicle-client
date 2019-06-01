@@ -13,6 +13,7 @@ export interface ICreateEventRequest<Plugin extends keyof Plugins,
   target: Targets;
   plugin: Plugin;
   params: Plugins[Plugin];
+  id?: string;
 }
 
 export interface IIdRequest {

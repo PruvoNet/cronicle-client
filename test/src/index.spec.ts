@@ -687,6 +687,91 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
+                it('should create event with unique id', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.onCall(0).resolves({code: 'not found', description: 'event with id not found'});
+                    requestStub.onCall(1).resolves(response);
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        title: 'myTitle',
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: basePlugins.shellplug,
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    return client.createEvent(request, true)
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: {
+                                    id,
+                                },
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
+                            });
+                            expect(requestStub.getCall(1).args[0]).to.eql({
+                                body: request,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/create_event/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should create event with error due to duplicate id', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    requestStub.resolves( {code: 0});
+                    const id = 'myId';
+                    const request = {
+                        id,
+                        title: 'myTitle',
+                        enabled: NumberedBoolean.TRUE,
+                        category: BaseCategories.GENERAL,
+                        target: BaseTargets.MAIN,
+                        plugin: basePlugins.shellplug,
+                        params: {
+                            script: 'myScript',
+                            annotate: NumberedBoolean.FALSE,
+                            json: NumberedBoolean.TRUE,
+                        },
+                        log_max_size: 30,
+                    };
+                    client.createEvent(request, true)
+                        .catch((error) => {
+                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            expect(error.code).to.eql('unique');
+                            expect(error.message).to.eql('event already exists');
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: {
+                                    id,
+                                },
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'POST',
+                                url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
+                            });
+                            expect(requestStub.getCall(1)).to.eql(null);
+                            done();
+                        });
+                });
+
                 it('should create event with error', (done) => {
                     const client = new cronicleClientStubbed({masterUrl, apiKey});
                     const code = 'myCode';

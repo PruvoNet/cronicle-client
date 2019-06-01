@@ -145,11 +145,12 @@ For all api endpoints documentations, please refer to [Cronicle api reference](h
 
 ### createEvent
 
-When creating an event, there is no unique restriction on the title.  
+When creating an event, there is no unique restriction on the title/id.  
 While searching for an event using `getEvent`, the
-api allows you to search by title, which is great, bus as of now (cronicle v0.89) it will return a single result.  
-This imposes an issue when you don't enforce a unique title since you will get a random result (see [#186](https://github.com/jhuckaby/Cronicle/issues/186))  
-Until this behaviour is fixed, you can tell the `createEvent` method to enforce title uniquness and it will fail if an event with the provided title already exists.
+api allows you to search by title/id, which is great, but as of now (cronicle v0.89) it will return a single result.  
+This imposes an issue when you don't enforce a unique title/id since you will get a random result (see [#186](https://github.com/jhuckaby/Cronicle/issues/186))  
+Until this behaviour is fixed, you can tell the `createEvent` method to enforce uniqueness and it will fail if an event with the provided title/id already exists.  
+Note: if `id` is provided - it will be used as the unique key, otherwise `title` will be used.
 
 ### Constructor
 

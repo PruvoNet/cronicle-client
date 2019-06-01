@@ -68,14 +68,14 @@ export class CronicleClient<Categories extends string = BaseCategories,
     }
 
     public createEvent<Plugin extends keyof Plugins>(
-        req: ICreateEventRequest<Plugin, Plugins, Targets, Categories>, enforceUniqueTitle?: boolean)
+        req: ICreateEventRequest<Plugin, Plugins, Targets, Categories>, enforceUnique?: boolean)
         : Promise<ICreateEventResponse> {
         return Promise.resolve()
             .then(() => {
-                if (!enforceUniqueTitle) {
+                if (!enforceUnique) {
                     return Promise.resolve();
                 }
-                return this.getEvent({title: req.title})
+                return this.getEvent(req.id ? {id: req.id} : {title: req.title})
                     .catch(() => {
                         return Promise.resolve();
                     })
