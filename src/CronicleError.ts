@@ -2,7 +2,7 @@
 
 import { IErrorResponse } from './requestResponseTypes';
 
-export class SchedulerError extends Error {
+export class CronicleError extends Error {
   public code: 0 | number | string;
 
   constructor(resp: IErrorResponse) {

@@ -4,7 +4,7 @@ import {
     getUtcTiming,
     getTiming,
     CronicleClient,
-    SchedulerError,
+    CronicleError,
     NumberedBoolean,
     BaseCategories,
     BaseTargets,
@@ -27,7 +27,7 @@ const stubs = {
 // tslint:disable-next-line
 const allImports = proxyquire('../../dist/', stubs);
 const cronicleClientStubbed: typeof CronicleClient = allImports.CronicleClient;
-const cchedulerErrorStubbed: typeof SchedulerError = allImports.SchedulerError;
+const cronicleErrorStubbed: typeof CronicleError = allImports.CronicleError;
 
 const masterUrl = 'http://my.croncicle.com:3012';
 const apiKey = 'myApiKey';
@@ -327,7 +327,7 @@ describe('cronicle client', () => {
                     requestStub.resolves({code, description});
                     client.getEvent({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -449,7 +449,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.getSchedule()
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -536,7 +536,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.runEvent({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -668,7 +668,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     client.createEvent(request, true)
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql('unique');
                             expect(error.message).to.eql('event already exists');
                             expect(requestStub.firstCall.args[0]).to.eql({
@@ -753,7 +753,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     client.createEvent(request, true)
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql('unique');
                             expect(error.message).to.eql('event already exists');
                             expect(requestStub.firstCall.args[0]).to.eql({
@@ -792,7 +792,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     client.createEvent(request)
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -869,7 +869,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.updateEvent({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -939,7 +939,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.updateJob({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -1008,7 +1008,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.deleteEvent({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -1075,7 +1075,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.abortJob({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
@@ -1139,7 +1139,7 @@ limit=${limit}&offset=${offset}`,
                     requestStub.resolves({code, description});
                     client.getJobStatus({id})
                         .catch((error) => {
-                            error.should.be.instanceOf(cchedulerErrorStubbed);
+                            error.should.be.instanceOf(cronicleErrorStubbed);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();

@@ -2,7 +2,7 @@
 
 import * as qs from 'querystring';
 import * as request from 'request-promise';
-import {SchedulerError} from './SchedulerError';
+import {CronicleError} from './CronicleError';
 import {
     IAbortJobRequest,
     IBasicResponse,
@@ -81,7 +81,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
                     })
                     .then((resp) => {
                         if (resp) {
-                            return Promise.reject(new SchedulerError({
+                            return Promise.reject(new CronicleError({
                                 code: 'unique',
                                 description: 'event already exists',
                             }));
@@ -135,7 +135,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
         return Promise.resolve(request(this._buildRequest(op, method, bodyOrQuery)))
             .then((response: T | IErrorResponse) => {
                 if (response.code !== 0) {
-                    return Promise.reject(new SchedulerError(response as IErrorResponse));
+                    return Promise.reject(new CronicleError(response as IErrorResponse));
                 }
                 return Promise.resolve(response as T);
             });

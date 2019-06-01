@@ -12,6 +12,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - allow unique id enforcement on event creation
+- Error handling docs
+
+### Fixed
+
+- Changed error class name to a more suitable one
 
 ## v0.1.0
 

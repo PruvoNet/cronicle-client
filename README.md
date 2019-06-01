@@ -36,7 +36,7 @@ If you want to use the timing utils, you must also install `moment`
 
 ```typescript
 import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, getUtcTiming, 
- HttpPluginMethods, basePlugins} from 'cronicle-client';
+ HttpPluginMethods, basePlugins, CronicleError} from 'cronicle-client';
 
 const scheduler = new CronicleClient({
   masterUrl: 'http://localhost:3012',
@@ -65,6 +65,9 @@ scheduler.createEvent({
       })
       .then((data) => {
         console.log(`Started event with job id: ${data.ids[0]}`);
+      })
+      .catch((err: CronicleError) => {
+        console.log(`Cronicle error: ${err.code} - ${err.message}`);
       });
 ```
 
@@ -72,7 +75,7 @@ scheduler.createEvent({
 
 ```typescript
 import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean,
-    getUtcTiming, IPluginNames } from 'cronicle-client';
+    getUtcTiming, IPluginNames, CronicleError } from 'cronicle-client';
 
 interface ICustomPluginData {
   duration: string;
@@ -136,14 +139,19 @@ scheduler.createEvent({
       })
       .then((data) => {
         console.log(`Started event with job id: ${data.ids[0]}`);
+      })
+      .catch((err: CronicleError) => {
+        console.log(`Cronicle error: ${err.code} - ${err.message}`);
       });
 ```
 
 ## Documentation
 
+### Methods
+
 For all api endpoints documentations, please refer to [Cronicle api reference](https://github.com/jhuckaby/Cronicle#api-reference)
 
-### createEvent
+#### createEvent
 
 When creating an event, there is no unique restriction on the title/id.  
 While searching for an event using `getEvent`, the
@@ -151,6 +159,13 @@ api allows you to search by title/id, which is great, but as of now (cronicle v0
 This imposes an issue when you don't enforce a unique title/id since you will get a random result (see [#186](https://github.com/jhuckaby/Cronicle/issues/186))  
 Until this behaviour is fixed, you can tell the `createEvent` method to enforce uniqueness and it will fail if an event with the provided title/id already exists.  
 Note: if `id` is provided - it will be used as the unique key, otherwise `title` will be used.
+
+### Error handling
+
+`Croncile` will always return a valid HTTP response (code `200`).  
+To raise an error, the `code` property of the response will be different than `0`.  
+In such cases, the current method will be rejected with `CronicleError` with the proper error message and the 
+`code` property.
 
 ### Constructor
 
