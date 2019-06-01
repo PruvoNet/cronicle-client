@@ -35,8 +35,8 @@ If you want to use the timing utils, you must also install `moment`
 ## Quick example
 
 ```typescript
-import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, getUtcTiming, 
- HttpPluginMethods, basePlugins, CronicleError} from 'cronicle-client';
+import { CronicleClient, NumberedBoolean, BaseCategories, BaseTargets, getFutureUtcTiming, 
+ HttpPluginMethods, basePlugins, CronicleError, TargetAlgorithms} from 'cronicle-client';
 
 const scheduler = new CronicleClient({
   masterUrl: 'http://localhost:3012',
@@ -47,9 +47,10 @@ scheduler.createEvent({
         plugin: basePlugins.urlplug,
         title: 'test event1',
         enabled: NumberedBoolean.TRUE,
+        algo: TargetAlgorithms.RANDOM,
         category: BaseCategories.GENERAL,
         target: BaseTargets.GENERAL,
-        timing: getUtcTiming('2016-05-26T14:50:50.900Z'),
+        timing: getFutureUtcTiming('2016-05-26T14:50:50.900Z'),
         timezone: 'Etc/UTC',
         params: {
           method: HttpPluginMethods.POST,
@@ -75,7 +76,7 @@ scheduler.createEvent({
 
 ```typescript
 import { CronicleClient, IHttpPluginData, IShellPluginData, ITestPluginData, NumberedBoolean,
-    getUtcTiming, IPluginNames, CronicleError } from 'cronicle-client';
+    getFutureUtcTiming, IPluginNames, CronicleError, TargetAlgorithms } from 'cronicle-client';
 
 interface ICustomPluginData {
   duration: string;
@@ -124,9 +125,10 @@ scheduler.createEvent({
         plugin: plugins.mycustomplug,
         title: 'test event1',
         enabled: NumberedBoolean.TRUE,
+        algo: TargetAlgorithms.RANDOM,
         category: Categories.TEST_CATEGORY2,
         target: Targets.AWS,
-        timing: getUtcTiming('2016-05-26T14:50:50.900Z'),
+        timing: getFutureUtcTiming('2016-05-26T14:50:50.900Z'),
         timezone: 'Etc/UTC',
         params: {
           duration: '60',
@@ -251,14 +253,14 @@ const scheduler = new CronicleClient<Categories, Targets, Plugins>({
 To support a wide variety of scheduling, the [timing object](https://github.com/jhuckaby/Cronicle#event-timing-object)
 an be very cumbersome...  
 To make life easier (at least when you just want to schedule an event for a single future run) you can use the 
-`getTiming` and `getUtcTiming` methods:
+`getFutureTiming` and `getFutureUtcTiming` methods:
 
 --NOTICE--  
 If you want to use the timing utils, you MUST `npm install --save moment`
 
 Running:
 ```typescript
-getUtcTiming(moment.utc('2016-05-26T14:50:50.900Z');
+getFutureUtcTiming(moment.utc('2016-05-26T14:50:50.900Z');
 ```
 
 Will produce:

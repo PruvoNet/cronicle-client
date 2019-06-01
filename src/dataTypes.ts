@@ -2,7 +2,7 @@
 
 import {NumberedBoolean} from './helperTypes';
 
-export enum Algorithms {
+export enum TargetAlgorithms {
     RANDOM = 'random',
     RR = 'round_robin',
     LEAST_CPU = 'least_cpu',
@@ -215,7 +215,7 @@ export interface ICreatedEvent<Plugin extends keyof Plugins,
 }
 
 export interface IEvent<Plugin extends keyof Plugins, Plugins, Targets extends string, Categories extends string> {
-    algo: Algorithms;
+    algo: TargetAlgorithms;
     catch_up: NumberedBoolean;
     category: Categories;
     chain: string;

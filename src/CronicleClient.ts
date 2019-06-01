@@ -21,15 +21,13 @@ import {IBasePlugins} from './plugins';
 
 const DEFAULT_API_VERSION = 'v1';
 
-export interface ISchedulerOptions {
-    masterUrl: string;
-    apiKey: string;
-    apiVersion?: string;
-}
-
 const enum HttpMethods {
     POST = 'POST',
     GET = 'GET',
+}
+
+interface IBodyOrQuery {
+    [key: string]: any;
 }
 
 export enum BaseTargets {
@@ -41,8 +39,10 @@ export enum BaseCategories {
     GENERAL = 'general',
 }
 
-interface IBody {
-    [key: string]: any;
+export interface ICronicleClientOptions {
+    masterUrl: string;
+    apiKey: string;
+    apiVersion?: string;
 }
 
 export class CronicleClient<Categories extends string = BaseCategories,
@@ -53,7 +53,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
     private readonly _baseUrl: string;
     private readonly _apiVersion: string;
 
-    constructor(opts: ISchedulerOptions) {
+    constructor(opts: ICronicleClientOptions) {
         if (!opts.masterUrl) {
             throw new Error('cronicle master url is required');
         }
@@ -130,9 +130,9 @@ export class CronicleClient<Categories extends string = BaseCategories,
         return this._executeRequest('get_schedule', HttpMethods.GET, req);
     }
 
-    private _executeRequest<T extends IBasicResponse>(op: string, method: HttpMethods, bodyOrQuery?: IBody)
-        : Promise<T> {
-        return Promise.resolve(request(this._buildRequest(op, method, bodyOrQuery)))
+    private _executeRequest<T extends IBasicResponse>(operation: string, httpMethod: HttpMethods,
+                                                      bodyOrQuery?: IBodyOrQuery): Promise<T> {
+        return Promise.resolve(request(this._buildRequest(operation, httpMethod, bodyOrQuery)))
             .then((response: T | IErrorResponse) => {
                 if (response.code !== 0) {
                     return Promise.reject(new CronicleError(response as IErrorResponse));
@@ -141,17 +141,18 @@ export class CronicleClient<Categories extends string = BaseCategories,
             });
     }
 
-    private _buildRequest(op: string, method: HttpMethods, bodyOrQuery?: IBody) {
+    private _buildRequest(operation: string, httpMethod: HttpMethods, bodyOrQuery?: IBodyOrQuery) {
         return {
-            url: this._getMethodUrl(op, method === HttpMethods.GET ? bodyOrQuery : undefined),
-            method,
-            body: method === HttpMethods.GET ? undefined : bodyOrQuery,
+            url: this._getMethodUrl(operation, httpMethod === HttpMethods.GET ? bodyOrQuery : undefined),
+            method: httpMethod,
+            body: httpMethod === HttpMethods.GET ? undefined : bodyOrQuery,
             json: true,
             headers: this._headers,
         };
     }
 
-    private _getMethodUrl(op: string, query?: IBody) {
-        return `${this._baseUrl}/${op}/${this._apiVersion}${query ? '?' : ''}${query ? qs.stringify(query) : ''}`;
+    private _getMethodUrl(operation: string, query?: IBodyOrQuery) {
+        const queryString = `${query ? '?' : ''}${query ? qs.stringify(query) : ''}`;
+        return `${this._baseUrl}/${operation}/${this._apiVersion}${queryString}`;
     }
 }

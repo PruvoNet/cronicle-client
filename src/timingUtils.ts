@@ -21,7 +21,7 @@ const _getTiming = (date: Moment): ITiming => {
     };
 };
 
-export const getTiming = (date: Moment | Date | string): ITiming => {
+export const getFutureTiming = (date: Moment | Date | string): ITiming => {
     const moment = _getMoment();
     if (!moment.isMoment(date)) {
         date = moment(date);
@@ -29,7 +29,7 @@ export const getTiming = (date: Moment | Date | string): ITiming => {
     return _getTiming(date);
 };
 
-export const getUtcTiming = (date: Moment | Date | string): ITiming => {
+export const getFutureUtcTiming = (date: Moment | Date | string): ITiming => {
     const moment = _getMoment();
     if (!moment.isMoment(date)) {
         date = moment.utc(date);

@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Changed some interfaces names to more suitable ones
 - Changed error class name to a more suitable one
 
 ## v0.1.0

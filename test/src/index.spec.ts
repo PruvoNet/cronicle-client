@@ -1,8 +1,8 @@
 'use strict';
 
 import {
-    getUtcTiming,
-    getTiming,
+    getFutureUtcTiming,
+    getFutureTiming,
     CronicleClient,
     CronicleError,
     NumberedBoolean,
@@ -40,7 +40,7 @@ describe('cronicle client', () => {
         describe('utc timing helpers ', () => {
 
             it('should create timing object from moment', () => {
-                const timing = getUtcTiming(moment.utc('2016-05-26T14:50:50.900Z'));
+                const timing = getFutureUtcTiming(moment.utc('2016-05-26T14:50:50.900Z'));
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
@@ -49,7 +49,7 @@ describe('cronicle client', () => {
             });
 
             it('should create timing object from date', () => {
-                const timing = getUtcTiming(new Date('2016-05-26T14:50:50.900Z'));
+                const timing = getFutureUtcTiming(new Date('2016-05-26T14:50:50.900Z'));
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
@@ -58,7 +58,7 @@ describe('cronicle client', () => {
             });
 
             it('should create timing object from string', () => {
-                const timing = getUtcTiming('2016-05-26T14:50:50.900Z');
+                const timing = getFutureUtcTiming('2016-05-26T14:50:50.900Z');
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
@@ -79,7 +79,7 @@ describe('cronicle client', () => {
             });
 
             it('should create timing object from moment', () => {
-                const timing = getTiming(moment('2016-05-26T14:50:50.900Z'));
+                const timing = getFutureTiming(moment('2016-05-26T14:50:50.900Z'));
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
@@ -88,7 +88,7 @@ describe('cronicle client', () => {
             });
 
             it('should create timing object from date', () => {
-                const timing = getTiming(new Date('2016-05-26T14:50:50.900Z'));
+                const timing = getFutureTiming(new Date('2016-05-26T14:50:50.900Z'));
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
@@ -97,7 +97,7 @@ describe('cronicle client', () => {
             });
 
             it('should create timing object from string', () => {
-                const timing = getTiming('2016-05-26T14:50:50.900Z');
+                const timing = getFutureTiming('2016-05-26T14:50:50.900Z');
                 expect(timing.years![0]).to.eq(2016);
                 expect(timing.months![0]).to.eq(5);
                 expect(timing.days![0]).to.eq(26);
