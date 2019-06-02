@@ -177,7 +177,6 @@ In such cases, the current method will be rejected with `CronicleError` with the
 |----------------|-------------|
 | `masterUrl`    | The full url to the master Cronicle server
 | `apiKey`       | The api key to use (make sure it has relevant permissions enabled)
-| `apiVersion`   | (Optional) override the default api version (`v1`)
 
 #### Typings
 

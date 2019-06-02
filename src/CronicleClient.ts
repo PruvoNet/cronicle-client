@@ -40,7 +40,6 @@ export enum BaseCategories {
 export interface ICronicleClientOptions {
     masterUrl: string;
     apiKey: string;
-    apiVersion?: string;
 }
 
 export class CronicleClient<Categories extends string = BaseCategories,

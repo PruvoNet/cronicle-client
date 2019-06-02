@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v1.0.1
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v1.0.0...v1.0.1)
+
+### Fixed
+
+- removed option to set api version as new version will require a new class with different types anyways...
+
 ## v1.0.0
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v0.2.0...v1.0.0)
