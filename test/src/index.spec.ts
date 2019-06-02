@@ -334,29 +334,6 @@ describe('cronicle client', () => {
                         });
                 });
 
-                it('should get event with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    return client.getEvent({id})
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: {
-                                    id,
-                                },
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/get_event/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
-                        });
-                });
-
             });
 
             describe('get schedule', () => {
@@ -456,26 +433,6 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should get schedule with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    return client.getSchedule()
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: undefined,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'GET',
-                                url: `${masterUrl}/api/app/get_schedule/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
-                        });
-                });
-
             });
 
             describe('run event', () => {
@@ -540,31 +497,6 @@ limit=${limit}&offset=${offset}`,
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
-                        });
-                });
-
-                it('should run event with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    const request = {
-                        id,
-                        log_max_size: 30,
-                    };
-                    return client.runEvent(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/run_event/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
                         });
                 });
 
@@ -799,39 +731,6 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should create event with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const request = {
-                        title: 'myTitle',
-                        enabled: NumberedBoolean.TRUE,
-                        category: BaseCategories.GENERAL,
-                        target: BaseTargets.MAIN,
-                        plugin: basePlugins.shellplug,
-                        params: {
-                            script: 'myScript',
-                            annotate: NumberedBoolean.FALSE,
-                            json: NumberedBoolean.TRUE,
-                        },
-                        log_max_size: 30,
-                    };
-                    return client.createEvent(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/create_event/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
-                        });
-                });
-
             });
 
             describe('update event', () => {
@@ -873,32 +772,6 @@ limit=${limit}&offset=${offset}`,
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
-                        });
-                });
-
-                it('should update event with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    const request = {
-                        id,
-                        timeout: 30,
-                        reset_cursor: NumberedBoolean.TRUE,
-                    };
-                    return client.updateEvent(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/update_event/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
                         });
                 });
 
@@ -946,32 +819,6 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should update job with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    const request = {
-                        id,
-                        timeout: 30,
-                        reset_cursor: NumberedBoolean.TRUE,
-                    };
-                    return client.updateJob(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/update_job/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
-                        });
-                });
-
             });
 
             describe('delete event', () => {
@@ -1012,31 +859,6 @@ limit=${limit}&offset=${offset}`,
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
-                        });
-                });
-
-                it('should delete event with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    const request = {
-                        id,
-                        log_max_size: 30,
-                    };
-                    return client.deleteEvent(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/delete_event/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
                         });
                 });
 
@@ -1082,31 +904,6 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should abort job with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    const request = {
-                        id,
-                        log_max_size: 30,
-                    };
-                    return client.abortJob(request)
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: request,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'POST',
-                                url: `${masterUrl}/api/app/abort_job/${apiVersion}`,
-                            });
-                            expect(resp).to.eq(response);
-                        });
-                });
-
             });
 
             describe('get job status', () => {
@@ -1143,27 +940,6 @@ limit=${limit}&offset=${offset}`,
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
                             done();
-                        });
-                });
-
-                it('should get job status with custom api version', () => {
-                    const apiVersion = 'v2';
-                    const client = new cronicleClientStubbed({masterUrl, apiKey, apiVersion});
-                    const response = {code: 0};
-                    requestStub.resolves(response);
-                    const id = 'myId';
-                    return client.getJobStatus({id})
-                        .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
-                                body: undefined,
-                                headers: {
-                                    'X-API-Key': apiKey,
-                                },
-                                json: true,
-                                method: 'GET',
-                                url: `${masterUrl}/api/app/get_job_status/${apiVersion}?id=${id}`,
-                            });
-                            expect(resp).to.eq(response);
                         });
                 });
 

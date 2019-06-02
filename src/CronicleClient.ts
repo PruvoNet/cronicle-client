@@ -19,8 +19,6 @@ import {
 } from './requestResponseTypes';
 import {IBasePlugins} from './plugins';
 
-const DEFAULT_API_VERSION = 'v1';
-
 const enum HttpMethods {
     POST = 'POST',
     GET = 'GET',
@@ -51,7 +49,6 @@ export class CronicleClient<Categories extends string = BaseCategories,
 
     private readonly _headers: any;
     private readonly _baseUrl: string;
-    private readonly _apiVersion: string;
 
     constructor(opts: ICronicleClientOptions) {
         if (!opts.masterUrl) {
@@ -61,7 +58,6 @@ export class CronicleClient<Categories extends string = BaseCategories,
             throw new Error('cronicle api key is required');
         }
         this._baseUrl = `${opts.masterUrl.replace(/\/$/, '')}/api/app`;
-        this._apiVersion = opts.apiVersion || DEFAULT_API_VERSION;
         this._headers = {
             'X-API-Key': opts.apiKey,
         };
@@ -153,6 +149,6 @@ export class CronicleClient<Categories extends string = BaseCategories,
 
     private _getMethodUrl(operation: string, query?: IBodyOrQuery) {
         const queryString = `${query ? '?' : ''}${query ? qs.stringify(query) : ''}`;
-        return `${this._baseUrl}/${operation}/${this._apiVersion}${queryString}`;
+        return `${this._baseUrl}/${operation}/v1${queryString}`;
     }
 }
