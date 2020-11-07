@@ -9,7 +9,7 @@ import {
     ICreateEventRequest,
     ICreateEventResponse, IDeleteEventRequest, IErrorResponse,
     IGetEventRequest,
-    IGetEventResponse,
+    IGetEventResponse, IGetHistoryRequest, IGetHistoryResponse,
     IGetJobStatusRequest,
     IGetJobStatusResponse, IGetScheduleRequest, IGetScheduleResponse,
     IRunEventRequest,
@@ -123,6 +123,10 @@ export class CronicleClient<Categories extends string = BaseCategories,
 
     public getSchedule(req?: IGetScheduleRequest): Promise<IGetScheduleResponse<any, Plugins, Targets, Categories>> {
         return this._executeRequest('get_schedule', HttpMethods.GET, req);
+    }
+
+    public getHistory(req?: IGetHistoryRequest): Promise<IGetHistoryResponse<any, Plugins, Targets, Categories>> {
+        return this._executeRequest('get_history', HttpMethods.GET, req);
     }
 
     private _executeRequest<T extends IBasicResponse>(operation: string, httpMethod: HttpMethods,

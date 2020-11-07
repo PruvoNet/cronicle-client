@@ -1,6 +1,6 @@
 'use strict';
 
-import { ICreatedEvent, IEvent, IJob } from './dataTypes';
+import {ICreatedEvent, IEvent, IJob, IJobHistory} from './dataTypes';
 import { NumberedBoolean, RecursivePartial } from './helperTypes';
 
 export interface ICreateEventRequest<Plugin extends keyof Plugins,
@@ -65,10 +65,13 @@ export type IUpdateJobRequest =
 export type IDeleteEventRequest = IIdRequest;
 export type IAbortJobRequest = IIdRequest;
 
-export interface IGetScheduleRequest {
+export interface IPaginatedRequest {
   offset?: number;
   limit?: number;
 }
+
+export type IGetScheduleRequest  = IPaginatedRequest;
+export type IGetHistoryRequest  = IPaginatedRequest;
 
 export interface IBasicResponse {
   code: 0 | number | string;
@@ -82,18 +85,28 @@ export interface ICreateEventResponse extends IBasicResponse {
   id: string;
 }
 
+export interface IPaginatedResponse {
+    list: {
+        page_size: number;
+        first_page: number;
+        last_page: number;
+        length: number;
+        type: 'list'
+    };
+}
+
 export interface IGetScheduleResponse<Plugin extends keyof Plugins,
   Plugins,
   Targets extends string,
-  Categories extends string> extends IBasicResponse {
+  Categories extends string> extends IBasicResponse, IPaginatedResponse {
   rows: Array<ICreatedEvent<Plugin, Plugins, Targets, Categories>>;
-  list: {
-    page_size: number;
-    first_page: number;
-    last_page: number;
-    length: number;
-    type: 'list'
-  };
+}
+
+export interface IGetHistoryResponse<Plugin extends keyof Plugins,
+  Plugins,
+  Targets extends string,
+  Categories extends string> extends IBasicResponse, IPaginatedResponse {
+  rows: Array<IJobHistory<Plugin, Plugins, Targets, Categories>>;
 }
 
 export interface IRunEventResponse extends IBasicResponse {

@@ -142,45 +142,18 @@ export interface ITiming {
     years?: number[];
 }
 
-export interface IJob<Plugin extends keyof Plugins,
+export interface IJobHistory<Plugin extends keyof Plugins,
     Plugins,
     Targets extends string,
     Categories extends string> {
-    hostname: string;
-    event: string;
-    source: string;
-    log_file: string;
-    log_file_size: number;
-    time_end: number;
-    elapsed: number;
-    pid: number;
-    now: number;
-    time_start: number;
-    plugin: Plugin;
-    category: Categories;
-    timeout: number;
-    retries: number;
-    retry_delay: number;
-    catch_up: NumberedBoolean;
-    queue: NumberedBoolean;
-    web_hook: string;
-    queue_max: number;
-    notes: string;
-    notify_fail: string;
-    notify_success: string;
-    timezone: string;
-    params: Plugins[Plugin];
     id: string;
-    event_title: string;
-    plugin_title: string;
-    category_title: string;
-    nice_target: string;
-    command: string;
-    type: string;
-    description?: string;
-    complete?: NumberedBoolean;
     code?: NumberedBoolean;
-    progress?: number;
+    event: string;
+    category: Categories;
+    plugin: Plugin;
+    hostname: string;
+    time_start: number;
+    elapsed: number;
     cpu?: {
         min: number;
         max: number;
@@ -200,7 +173,39 @@ export interface IJob<Plugin extends keyof Plugins,
         counters: { [k: string]: number; };
         perf: { [k: string]: number; };
     };
+    log_file_size: number;
+    event_title: string;
+    plugin_title: string;
+    category_title: string;
+}
 
+export interface IJob<Plugin extends keyof Plugins,
+    Plugins,
+    Targets extends string,
+    Categories extends string> extends IJobHistory<Plugin, Plugins, Targets, Categories> {
+    source: string;
+    log_file: string;
+    time_end: number;
+    pid: number;
+    now: number;
+    timeout: number;
+    retries: number;
+    retry_delay: number;
+    catch_up: NumberedBoolean;
+    queue: NumberedBoolean;
+    web_hook: string;
+    queue_max: number;
+    notes: string;
+    notify_fail: string;
+    notify_success: string;
+    timezone: string;
+    params: Plugins[Plugin];
+    nice_target: string;
+    command: string;
+    type: string;
+    description?: string;
+    complete?: NumberedBoolean;
+    progress?: number;
 }
 
 export interface ICreatedEvent<Plugin extends keyof Plugins,

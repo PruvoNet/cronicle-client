@@ -435,6 +435,105 @@ limit=${limit}&offset=${offset}`,
 
             });
 
+            describe('get history', () => {
+
+                it('should get history with no params', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    return client.getHistory()
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_history/${defaultVersion}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get history with offset', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const offset = 1;
+                    return client.getHistory({offset})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_history/${defaultVersion}?offset=${offset}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get history with limit', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const limit = 1;
+                    return client.getHistory({limit})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_history/${defaultVersion}?limit=${limit}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get history with limit and offset', () => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const response = {code: 0};
+                    requestStub.resolves(response);
+                    const limit = 1;
+                    const offset = 1;
+                    return client.getHistory({limit, offset})
+                        .then((resp) => {
+                            expect(requestStub.firstCall.args[0]).to.eql({
+                                body: undefined,
+                                headers: {
+                                    'X-API-Key': apiKey,
+                                },
+                                json: true,
+                                method: 'GET',
+                                url: `${masterUrl}/api/app/get_history/${defaultVersion}?\
+limit=${limit}&offset=${offset}`,
+                            });
+                            expect(resp).to.eq(response);
+                        });
+                });
+
+                it('should get history with error', (done) => {
+                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const code = 'myCode';
+                    const description = 'mydDescription';
+                    requestStub.resolves({code, description});
+                    client.getHistory()
+                        .catch((error) => {
+                            error.should.be.instanceOf(cronicleErrorStubbed);
+                            expect(error.code).to.eql(code);
+                            expect(error.message).to.eql(description);
+                            done();
+                        });
+                });
+
+            });
+
             describe('run event', () => {
 
                 it('should run event with id', () => {
