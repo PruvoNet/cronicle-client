@@ -54,7 +54,7 @@
     "delay": "^4.2.0",
     "dirty-chai": "^2.0.1",
     "istanbul": "^0.4.5",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "moment": "^2.24.0",
     "npm-install-peers": "^1.2.1",
     "proxyquire": "^2.1.0",
