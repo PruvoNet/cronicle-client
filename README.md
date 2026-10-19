@@ -1,10 +1,6 @@
 [![Npm Version](https://img.shields.io/npm/v/cronicle-client.svg?style=popout)](https://www.npmjs.com/package/cronicle-client)
-[![Build Status](https://travis-ci.org/PruvoNet/cronicle-client.svg?branch=master)](https://travis-ci.org/PruvoNet/cronicle-client)
-[![Coverage Status](https://coveralls.io/repos/github/PruvoNet/cronicle-client/badge.svg?branch=master)](https://coveralls.io/github/PruvoNet/cronicle-client?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/58abd1713b064f4c9af7dc88d7178ebe)](https://www.codacy.com/app/regevbr/cronicle-client?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PruvoNet/cronicle-client&amp;utm_campaign=Badge_Grade)
+[![CI](https://github.com/PruvoNet/cronicle-client/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/PruvoNet/cronicle-client/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/PruvoNet/cronicle-client/badge.svg?targetFile=package.json)](https://snyk.io/test/github/PruvoNet/cronicle-client?targetFile=package.json)
-[![dependencies Status](https://david-dm.org/PruvoNet/cronicle-client/status.svg)](https://david-dm.org/PruvoNet/cronicle-client)
-[![devDependencies Status](https://david-dm.org/PruvoNet/cronicle-client/dev-status.svg)](https://david-dm.org/PruvoNet/cronicle-client?type=dev)
 
 <p align="center">
   <img src="https://github.com/PruvoNet/cronicle-client/blob/master/.github/logo.png?raw=true" />

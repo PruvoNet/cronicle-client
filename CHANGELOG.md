@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v2.0.0
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v1.1.0...v2.0.0)
+
+### Breaking
+
+- Requires Node 18 or later. No code change from 1.1.0.
+
+### Changed
+
+- Published from GitHub Actions through npm trusted publishing (OIDC), with provenance.
+
 ## v1.0.1
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v1.0.0...v1.0.1)

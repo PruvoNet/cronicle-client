@@ -138,6 +138,10 @@ describe('cronicle client', () => {
 
         describe('typing', () => {
 
+            beforeEach(() => {
+                requestStub.resolves({code: 0});
+            });
+
             it('should allow extended plugins', () => {
                 enum Categories {
                     // Default category
@@ -160,7 +164,7 @@ describe('cronicle client', () => {
                     },
                     log_max_size: 30,
                 };
-                client.createEvent(request);
+                return client.createEvent(request);
             });
 
             it('should allow extended targets', () => {
@@ -193,7 +197,7 @@ describe('cronicle client', () => {
                     },
                     log_max_size: 30,
                 };
-                client.createEvent(request);
+                return client.createEvent(request);
             });
 
             it('should allow extended plugins', () => {
@@ -244,7 +248,7 @@ describe('cronicle client', () => {
                     },
                     log_max_size: 30,
                 };
-                client.createEvent(request);
+                return client.createEvent(request);
             });
 
         });
