@@ -9,48 +9,20 @@ on:
       - '**'
   workflow_call:
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
-  test:
-    name: CI
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x, 24.x]
-
-    steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-        name: Checkout
-        with:
-          persist-credentials: false
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint and build
-        run: npm run build
-
-      - name: Run tests
-        run: npm run mocha
-
-  zizmor:
-    name: Workflow security (zizmor)
-    runs-on: ubuntu-latest
+  ci:
+    uses: PruvoNet/oss-workflows/.github/workflows/ci-node.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-        with:
-          persist-credentials: false
+    with:
+      package-manager: npm
+      node-versions: '["18.x", "20.x", "22.x", "24.x"]'
+      build-command: npm run build
+      test-command: npm run mocha
 
-      - uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
-        with:
-          advanced-security: false
+  zizmor:
+    uses: PruvoNet/oss-workflows/.github/workflows/zizmor.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      contents: read
