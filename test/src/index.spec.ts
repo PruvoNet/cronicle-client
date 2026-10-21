@@ -1,33 +1,27 @@
 'use strict';
 
-import {
-    getFutureUtcTiming,
-    getFutureTiming,
-    CronicleClient,
-    CronicleError,
-    NumberedBoolean,
-    BaseCategories,
-    BaseTargets,
-    IHttpPluginData, IShellPluginData, ITestPluginData, basePlugins
-} from '../../dist/';
 import moment = require('moment');
-import {expect} from 'chai';
-import * as proxyquire from 'proxyquire';
-// @ts-ignore
-import * as sinon from 'sinon';
 // @ts-ignore
 import * as timezoneMock from 'timezone-mock';
-import {IPluginNames} from '../../src';
+import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
+import {
+    BaseCategories,
+    basePlugins,
+    BaseTargets,
+    CronicleClient,
+    CronicleError,
+    getFutureTiming,
+    getFutureUtcTiming,
+    IHttpPluginData,
+    IPluginNames,
+    IShellPluginData,
+    ITestPluginData,
+    NumberedBoolean,
+} from '../../src';
+import {requestJson} from '../../src/http';
 
-const requestStub = sinon.stub();
-// '@global' reaches CronicleClient's own require('./http'), one level below dist/index.
-const stubs = {
-    './http': {requestJson: requestStub, '@global': true},
-};
-// tslint:disable-next-line
-const allImports = proxyquire('../../dist/', stubs);
-const cronicleClientStubbed: typeof CronicleClient = allImports.CronicleClient;
-const cronicleErrorStubbed: typeof CronicleError = allImports.CronicleError;
+vi.mock('../../src/http', () => ({requestJson: vi.fn()}));
+const requestStub = vi.mocked(requestJson);
 
 const masterUrl = 'http://my.croncicle.com:3012';
 const apiKey = 'myApiKey';
@@ -70,11 +64,11 @@ describe('cronicle client', () => {
 
         describe('non utc timing helpers ', () => {
 
-            before(() => {
+            beforeAll(() => {
                 timezoneMock.register('US/Pacific');
             });
 
-            after(() => {
+            afterAll(() => {
                 timezoneMock.unregister();
             });
 
@@ -112,34 +106,24 @@ describe('cronicle client', () => {
     describe('cronicle client', () => {
 
         beforeEach(() => {
-            requestStub.reset();
+            requestStub.mockReset();
         });
 
         describe('constructor', () => {
 
-            it('should fail if no master url is provided', (done) => {
-                try {
-                    new CronicleClient({apiKey} as any);
-                } catch (error) {
-                    expect(error.message).to.eql('cronicle master url is required');
-                    done();
-                }
+            it('should fail if no master url is provided', () => {
+                expect(() => new CronicleClient({apiKey} as any)).to.throw('cronicle master url is required');
             });
 
-            it('should fail if no api key is provided', (done) => {
-                try {
-                    new CronicleClient({masterUrl} as any);
-                } catch (error) {
-                    expect(error.message).to.eql('cronicle api key is required');
-                    done();
-                }
+            it('should fail if no api key is provided', () => {
+                expect(() => new CronicleClient({masterUrl} as any)).to.throw('cronicle api key is required');
             });
         });
 
         describe('typing', () => {
 
             beforeEach(() => {
-                requestStub.resolves({code: 0});
+                requestStub.mockResolvedValue({code: 0});
             });
 
             it('should allow extended plugins', () => {
@@ -150,7 +134,7 @@ describe('cronicle client', () => {
                     TEST_CATEGORY = 'cjw6g085901',
                     TEST_CATEGORY2 = 'cjw6l8mnb02',
                 }
-                const client = new cronicleClientStubbed<Categories>({masterUrl, apiKey});
+                const client = new CronicleClient<Categories>({masterUrl, apiKey});
                 const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
@@ -183,7 +167,7 @@ describe('cronicle client', () => {
                     AWS = 'awsgrp',
                     GCP = 'gcpgrp',
                 }
-                const client = new cronicleClientStubbed<Categories, Targets>({masterUrl, apiKey});
+                const client = new CronicleClient<Categories, Targets>({masterUrl, apiKey});
                 const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
@@ -235,7 +219,7 @@ describe('cronicle client', () => {
                     testplug: 'testplug',
                     mycustomplug: 'mycustomplug',
                 };
-                const client = new cronicleClientStubbed<Categories, Targets, Plugins>({masterUrl, apiKey});
+                const client = new CronicleClient<Categories, Targets, Plugins>({masterUrl, apiKey});
                 const request = {
                     title: 'myTitle',
                     enabled: NumberedBoolean.TRUE,
@@ -258,13 +242,13 @@ describe('cronicle client', () => {
             describe('get event', () => {
 
                 it('should get event with id and master url with trailing slash', () => {
-                    const client = new cronicleClientStubbed({masterUrl: `${masterUrl}/`, apiKey});
+                    const client = new CronicleClient({masterUrl: `${masterUrl}/`, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     return client.getEvent({id})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     id,
                                 },
@@ -280,13 +264,13 @@ describe('cronicle client', () => {
                 });
 
                 it('should get event with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     return client.getEvent({id})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     id,
                                 },
@@ -302,13 +286,13 @@ describe('cronicle client', () => {
                 });
 
                 it('should get event with title', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const title = 'myTitle';
                     return client.getEvent({title})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     title,
                                 },
@@ -323,18 +307,17 @@ describe('cronicle client', () => {
                         });
                 });
 
-                it('should get event with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should get event with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.getEvent({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.getEvent({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -343,12 +326,12 @@ describe('cronicle client', () => {
             describe('get schedule', () => {
 
                 it('should get schedule with no params', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     return client.getSchedule()
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -362,13 +345,13 @@ describe('cronicle client', () => {
                 });
 
                 it('should get schedule with offset', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const offset = 1;
                     return client.getSchedule({offset})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -382,13 +365,13 @@ describe('cronicle client', () => {
                 });
 
                 it('should get schedule with limit', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const limit = 1;
                     return client.getSchedule({limit})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -402,14 +385,14 @@ describe('cronicle client', () => {
                 });
 
                 it('should get schedule with limit and offset', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const limit = 1;
                     const offset = 1;
                     return client.getSchedule({limit, offset})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -423,17 +406,16 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should get schedule with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should get schedule with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.getSchedule()
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.getSchedule()
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -442,12 +424,12 @@ limit=${limit}&offset=${offset}`,
             describe('get history', () => {
 
                 it('should get history with no params', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     return client.getHistory()
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -461,13 +443,13 @@ limit=${limit}&offset=${offset}`,
                 });
 
                 it('should get history with offset', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const offset = 1;
                     return client.getHistory({offset})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -481,13 +463,13 @@ limit=${limit}&offset=${offset}`,
                 });
 
                 it('should get history with limit', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const limit = 1;
                     return client.getHistory({limit})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -501,14 +483,14 @@ limit=${limit}&offset=${offset}`,
                 });
 
                 it('should get history with limit and offset', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const limit = 1;
                     const offset = 1;
                     return client.getHistory({limit, offset})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -522,17 +504,16 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should get history with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should get history with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.getHistory()
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.getHistory()
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -541,9 +522,9 @@ limit=${limit}&offset=${offset}`,
             describe('run event', () => {
 
                 it('should run event with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     const request = {
                         id,
@@ -551,7 +532,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.runEvent(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -565,9 +546,9 @@ limit=${limit}&offset=${offset}`,
                 });
 
                 it('should run event with title', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const title = 'myTtile';
                     const request = {
                         title,
@@ -575,7 +556,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.runEvent(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -588,18 +569,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should run event with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should run event with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.runEvent({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.runEvent({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -608,9 +588,9 @@ limit=${limit}&offset=${offset}`,
             describe('create event', () => {
 
                 it('should create event', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const request = {
                         title: 'myTitle',
                         enabled: NumberedBoolean.TRUE,
@@ -626,7 +606,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.createEvent(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -640,10 +620,10 @@ limit=${limit}&offset=${offset}`,
                 });
 
                 it('should create event with unique title', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.onCall(0).resolves({code: 'not found', description: 'event with title not found'});
-                    requestStub.onCall(1).resolves(response);
+                    requestStub.mockResolvedValueOnce({code: 'not found', description: 'event with title not found'});
+                    requestStub.mockResolvedValueOnce(response);
                     const title = 'myTitle';
                     const request = {
                         title,
@@ -660,7 +640,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.createEvent(request, true)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     title,
                                 },
@@ -671,7 +651,7 @@ limit=${limit}&offset=${offset}`,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
                             });
-                            expect(requestStub.getCall(1).args[0]).to.eql({
+                            expect(requestStub.mock.calls[1][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -684,9 +664,9 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should create event with error due to duplicate title', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
-                    requestStub.resolves( {code: 0});
+                it('should create event with error due to duplicate title', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
+                    requestStub.mockResolvedValue({code: 0});
                     const title = 'myTitle';
                     const request = {
                         title,
@@ -701,12 +681,12 @@ limit=${limit}&offset=${offset}`,
                         },
                         log_max_size: 30,
                     };
-                    client.createEvent(request, true)
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    return client.createEvent(request, true)
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql('unique');
                             expect(error.message).to.eql('event already exists');
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     title,
                                 },
@@ -717,16 +697,15 @@ limit=${limit}&offset=${offset}`,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
                             });
-                            expect(requestStub.getCall(1)).to.eql(null);
-                            done();
+                            expect(requestStub).toHaveBeenCalledTimes(1);
                         });
                 });
 
                 it('should create event with unique id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.onCall(0).resolves({code: 'not found', description: 'event with id not found'});
-                    requestStub.onCall(1).resolves(response);
+                    requestStub.mockResolvedValueOnce({code: 'not found', description: 'event with id not found'});
+                    requestStub.mockResolvedValueOnce(response);
                     const id = 'myId';
                     const request = {
                         id,
@@ -744,7 +723,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.createEvent(request, true)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     id,
                                 },
@@ -755,7 +734,7 @@ limit=${limit}&offset=${offset}`,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
                             });
-                            expect(requestStub.getCall(1).args[0]).to.eql({
+                            expect(requestStub.mock.calls[1][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -768,9 +747,9 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should create event with error due to duplicate id', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
-                    requestStub.resolves( {code: 0});
+                it('should create event with error due to duplicate id', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
+                    requestStub.mockResolvedValue({code: 0});
                     const id = 'myId';
                     const request = {
                         id,
@@ -786,12 +765,12 @@ limit=${limit}&offset=${offset}`,
                         },
                         log_max_size: 30,
                     };
-                    client.createEvent(request, true)
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    return client.createEvent(request, true)
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql('unique');
                             expect(error.message).to.eql('event already exists');
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: {
                                     id,
                                 },
@@ -802,16 +781,15 @@ limit=${limit}&offset=${offset}`,
                                 method: 'POST',
                                 url: `${masterUrl}/api/app/get_event/${defaultVersion}`,
                             });
-                            expect(requestStub.getCall(1)).to.eql(null);
-                            done();
+                            expect(requestStub).toHaveBeenCalledTimes(1);
                         });
                 });
 
-                it('should create event with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should create event with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
+                    requestStub.mockResolvedValue({code, description});
                     const request = {
                         title: 'myTitle',
                         enabled: NumberedBoolean.TRUE,
@@ -825,12 +803,11 @@ limit=${limit}&offset=${offset}`,
                         },
                         log_max_size: 30,
                     };
-                    client.createEvent(request)
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    return client.createEvent(request)
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -839,9 +816,9 @@ limit=${limit}&offset=${offset}`,
             describe('update event', () => {
 
                 it('should update event with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     const request = {
                         id,
@@ -850,7 +827,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.updateEvent(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -863,18 +840,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should update event with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should update event with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.updateEvent({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.updateEvent({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -883,9 +859,9 @@ limit=${limit}&offset=${offset}`,
             describe('update job', () => {
 
                 it('should update job with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     const request = {
                         id,
@@ -894,7 +870,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.updateJob(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -907,18 +883,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should update job with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should update job with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.updateJob({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.updateJob({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -927,9 +902,9 @@ limit=${limit}&offset=${offset}`,
             describe('delete event', () => {
 
                 it('should delete event with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     const request = {
                         id,
@@ -937,7 +912,7 @@ limit=${limit}&offset=${offset}`,
                     };
                     return client.deleteEvent(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -950,18 +925,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should delete event with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should delete event with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.deleteEvent({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.deleteEvent({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -970,16 +944,16 @@ limit=${limit}&offset=${offset}`,
             describe('abort job', () => {
 
                 it('should abort job with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     const request = {
                         id,
                     };
                     return client.abortJob(request)
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: request,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -992,18 +966,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should abort job with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should abort job with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.abortJob({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.abortJob({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
@@ -1012,13 +985,13 @@ limit=${limit}&offset=${offset}`,
             describe('get job status', () => {
 
                 it('should get job status with id', () => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const response = {code: 0};
-                    requestStub.resolves(response);
+                    requestStub.mockResolvedValue(response);
                     const id = 'myId';
                     return client.getJobStatus({id})
                         .then((resp) => {
-                            expect(requestStub.firstCall.args[0]).to.eql({
+                            expect(requestStub.mock.calls[0][0]).to.eql({
                                 body: undefined,
                                 headers: {
                                     'X-API-Key': apiKey,
@@ -1031,18 +1004,17 @@ limit=${limit}&offset=${offset}`,
                         });
                 });
 
-                it('should get job status with error', (done) => {
-                    const client = new cronicleClientStubbed({masterUrl, apiKey});
+                it('should get job status with error', () => {
+                    const client = new CronicleClient({masterUrl, apiKey});
                     const id = 'myId';
                     const code = 'myCode';
                     const description = 'mydDescription';
-                    requestStub.resolves({code, description});
-                    client.getJobStatus({id})
-                        .catch((error) => {
-                            error.should.be.instanceOf(cronicleErrorStubbed);
+                    requestStub.mockResolvedValue({code, description});
+                    return client.getJobStatus({id})
+                        .then(() => expect.unreachable('should reject'), (error) => {
+                            expect(error).to.be.instanceOf(CronicleError);
                             expect(error.code).to.eql(code);
                             expect(error.message).to.eql(description);
-                            done();
                         });
                 });
 
