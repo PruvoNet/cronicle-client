@@ -1,8 +1,8 @@
 'use strict';
 
 import * as qs from 'querystring';
-import * as request from 'request-promise';
 import {CronicleError} from './CronicleError';
+import {IJsonRequest, requestJson} from './http';
 import {
     IAbortJobRequest,
     IBasicResponse,
@@ -46,7 +46,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
     Targets extends string = BaseTargets,
     Plugins = IBasePlugins> {
 
-    private readonly _headers: any;
+    private readonly _headers: { [name: string]: string };
     private readonly _baseUrl: string;
 
     constructor(opts: ICronicleClientOptions) {
@@ -131,7 +131,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
 
     private _executeRequest<T extends IBasicResponse>(operation: string, httpMethod: HttpMethods,
                                                       bodyOrQuery?: IBodyOrQuery): Promise<T> {
-        return Promise.resolve(request(this._buildRequest(operation, httpMethod, bodyOrQuery)))
+        return requestJson(this._buildRequest(operation, httpMethod, bodyOrQuery))
             .then((response: T | IErrorResponse) => {
                 if (response.code !== 0) {
                     return Promise.reject(new CronicleError(response as IErrorResponse));
@@ -140,7 +140,7 @@ export class CronicleClient<Categories extends string = BaseCategories,
             });
     }
 
-    private _buildRequest(operation: string, httpMethod: HttpMethods, bodyOrQuery?: IBodyOrQuery) {
+    private _buildRequest(operation: string, httpMethod: HttpMethods, bodyOrQuery?: IBodyOrQuery): IJsonRequest {
         return {
             url: this._getMethodUrl(operation, httpMethod === HttpMethods.GET ? bodyOrQuery : undefined),
             method: httpMethod,

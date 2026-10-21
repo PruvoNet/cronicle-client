@@ -20,9 +20,9 @@ import * as timezoneMock from 'timezone-mock';
 import {IPluginNames} from '../../src';
 
 const requestStub = sinon.stub();
-(requestStub as any)['@global'] = true;
+// '@global' reaches CronicleClient's own require('./http'), one level below dist/index.
 const stubs = {
-    'request-promise': requestStub,
+    './http': {requestJson: requestStub, '@global': true},
 };
 // tslint:disable-next-line
 const allImports = proxyquire('../../dist/', stubs);
