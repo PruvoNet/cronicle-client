@@ -1,8 +1,8 @@
 'use strict';
 
-import {expect} from 'chai';
 import * as http from 'http';
 import {AddressInfo} from 'net';
+import {afterAll, beforeAll, beforeEach, describe, expect, it} from 'vitest';
 import {
     BaseCategories,
     BaseTargets,
@@ -10,8 +10,8 @@ import {
     CronicleClient,
     CronicleError,
     NumberedBoolean,
-} from '../../dist/';
-import {RequestError, StatusCodeError} from '../../dist/http';
+} from '../../src';
+import {RequestError, StatusCodeError} from '../../src/http';
 
 // No stubs: the real CronicleClient and the global fetch, against a local server that plays the Cronicle API.
 
@@ -33,7 +33,7 @@ describe('CronicleClient over HTTP', () => {
     let received: IReceived[];
     let reply: Reply;
 
-    before((done) => {
+    beforeAll(async () => {
         server = http.createServer((req, res) => {
             let raw = '';
             req.on('data', (chunk) => raw += chunk);
@@ -54,14 +54,12 @@ describe('CronicleClient over HTTP', () => {
                 res.end(out.raw !== undefined ? out.raw : out.body === undefined ? '' : JSON.stringify(out.body));
             });
         });
-        server.listen(0, '127.0.0.1', () => {
-            masterUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-            done();
-        });
+        await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
+        masterUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
     });
 
-    after((done) => {
-        server.close(done);
+    afterAll(async () => {
+        await new Promise<void>((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
     });
 
     beforeEach(() => {

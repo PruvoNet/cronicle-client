@@ -18,9 +18,9 @@ jobs:
       contents: read
     with:
       package-manager: npm
-      node-versions: '["18.x", "20.x", "22.x", "24.x"]'
+      node-versions: '["20.x", "22.x", "24.x"]'
       build-command: npm run build
-      test-command: npm run mocha
+      test-command: npm run test:unit
 
   zizmor:
     uses: PruvoNet/oss-workflows/.github/workflows/zizmor.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
