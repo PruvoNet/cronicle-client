@@ -144,6 +144,8 @@ export interface ITiming {
 
 export interface IJobHistory<Plugin extends keyof Plugins,
     Plugins,
+    // Unused, but part of the public generic signature.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Targets extends string,
     Categories extends string> {
     id: string;

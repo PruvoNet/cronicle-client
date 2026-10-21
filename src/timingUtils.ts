@@ -7,6 +7,8 @@ import {Days, Hours, ITiming, Minutes, Months} from './dataTypes';
 let _moment: typeof MomentNamespace;
 
 const _getMoment = (): typeof MomentNamespace => {
+    // Loaded lazily: only the timing helpers need moment.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     _moment = _moment || require('moment');
     return _moment;
 };
