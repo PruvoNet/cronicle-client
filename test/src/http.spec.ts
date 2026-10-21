@@ -3,7 +3,7 @@
 import {expect} from 'chai';
 // @ts-ignore
 import * as sinon from 'sinon';
-import {requestJson, StatusCodeError} from '../../dist/http';
+import {RequestError, requestJson, StatusCodeError} from '../../dist/http';
 
 describe('http', () => {
 
@@ -19,10 +19,10 @@ describe('http', () => {
         (global as any).fetch = realFetch;
     });
 
-    const respond = (status: number, body?: object) => fetchStub.resolves({
+    const respond = (status: number, body?: object | string) => fetchStub.resolves({
         ok: status >= 200 && status < 300,
         status,
-        text: () => Promise.resolve(body === undefined ? '' : JSON.stringify(body)),
+        text: () => Promise.resolve(body === undefined ? '' : typeof body === 'string' ? body : JSON.stringify(body)),
     });
 
     it('should send a JSON body and parse the JSON response', () => {
@@ -66,6 +66,62 @@ describe('http', () => {
                 expect(err.error).to.eql({message: 'down'});
                 expect(err.message).to.eq('503 - {"message":"down"}');
             });
+    });
+
+    it('should reject with StatusCodeError and the raw text when an error body is not JSON', () => {
+        respond(502, '<html>Bad Gateway</html>');
+        return requestJson({url: 'http://h/e', method: 'GET', headers: {}, json: true})
+            .then(() => expect.fail('should reject'), (err) => {
+                expect(err).to.be.instanceOf(StatusCodeError);
+                expect(err.statusCode).to.eq(502);
+                expect(err.error).to.eq('<html>Bad Gateway</html>');
+            });
+    });
+
+    const fetchFailed = (cause: unknown) => Object.assign(new TypeError('fetch failed'), {cause});
+
+    it('should reject with RequestError carrying the socket error when no response arrives', () => {
+        const cause = Object.assign(new Error('connect ECONNREFUSED 10.0.0.1:3012'), {code: 'ECONNREFUSED'});
+        fetchStub.rejects(fetchFailed(cause));
+        return requestJson({url: 'http://h/g', method: 'GET', headers: {}, json: true})
+            .then(() => expect.fail('should reject'), (err) => {
+                expect(err).to.be.instanceOf(RequestError);
+                expect(err.name).to.eq('RequestError');
+                expect(err.message).to.eq('connect ECONNREFUSED 10.0.0.1:3012');
+                expect(err.code).to.eq('ECONNREFUSED');
+                expect(err.cause).to.eq(cause);
+                expect(err.error).to.eq(cause);
+                expect(err.statusCode).to.eq(undefined);
+            });
+    });
+
+    it('should describe an AggregateError cause by its inner errors', () => {
+        const cause = Object.assign(new Error(''), {
+            code: 'ECONNREFUSED',
+            errors: [new Error('connect ECONNREFUSED ::1:3012'), new Error('connect ECONNREFUSED 127.0.0.1:3012')],
+        });
+        fetchStub.rejects(fetchFailed(cause));
+        return requestJson({url: 'http://h/h', method: 'GET', headers: {}, json: true})
+            .then(() => expect.fail('should reject'), (err) => {
+                expect(err).to.be.instanceOf(RequestError);
+                expect(err.message).to.eq('connect ECONNREFUSED ::1:3012; connect ECONNREFUSED 127.0.0.1:3012');
+                expect(err.code).to.eq('ECONNREFUSED');
+            });
+    });
+
+    it('should add the code to the message when the message lacks it', () => {
+        const cause = Object.assign(new Error('getaddrinfo failed'), {code: 'ENOTFOUND'});
+        fetchStub.rejects(fetchFailed(cause));
+        return requestJson({url: 'http://h/i', method: 'GET', headers: {}, json: true})
+            .then(() => expect.fail('should reject'), (err) => {
+                expect(err.message).to.eq('ENOTFOUND getaddrinfo failed');
+            });
+    });
+
+    it('should resolve with the raw text when a 2xx body is not JSON', () => {
+        respond(200, 'OK');
+        return requestJson({url: 'http://h/f', method: 'GET', headers: {}, json: true})
+            .then((resp) => expect(resp).to.eq('OK'));
     });
 
 });

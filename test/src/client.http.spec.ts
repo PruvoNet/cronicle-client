@@ -11,7 +11,7 @@ import {
     CronicleError,
     NumberedBoolean,
 } from '../../dist/';
-import {StatusCodeError} from '../../dist/http';
+import {RequestError, StatusCodeError} from '../../dist/http';
 
 // No stubs: the real CronicleClient and the global fetch, against a local server that plays the Cronicle API.
 
@@ -23,7 +23,7 @@ interface IReceived {
     body: any;
 }
 
-type Reply = (req: IReceived) => { status?: number, body?: object };
+type Reply = (req: IReceived) => { status?: number, body?: object, raw?: string };
 
 describe('CronicleClient over HTTP', () => {
 
@@ -51,7 +51,7 @@ describe('CronicleClient over HTTP', () => {
                 res.setHeader('Content-Type', 'application/json');
                 // Node 18's fetch keeps the socket for reuse, and its server.close() waits for idle sockets.
                 res.setHeader('Connection', 'close');
-                res.end(out.body === undefined ? '' : JSON.stringify(out.body));
+                res.end(out.raw !== undefined ? out.raw : out.body === undefined ? '' : JSON.stringify(out.body));
             });
         });
         server.listen(0, '127.0.0.1', () => {
@@ -150,6 +150,25 @@ describe('CronicleClient over HTTP', () => {
             expect(err).to.be.instanceOf(StatusCodeError);
             expect(err.statusCode).to.eq(500);
             expect(err.error).to.eql({message: 'boom'});
+        });
+
+        it('should reject with RequestError and the socket error when the server is down', async () => {
+            const closed = http.createServer();
+            await new Promise<void>((resolve) => closed.listen(0, '127.0.0.1', () => resolve()));
+            const port = (closed.address() as AddressInfo).port;
+            await new Promise<void>((resolve) => closed.close(() => resolve()));
+            const err = await newClient(`http://127.0.0.1:${port}`).getEvent({id: 'e1'}).then(() => undefined, (e) => e);
+            expect(err).to.be.instanceOf(RequestError);
+            expect(err.code).to.eq('ECONNREFUSED');
+            expect(err.message).to.contain('ECONNREFUSED');
+        });
+
+        it('should reject with StatusCodeError when an HTTP error body is not JSON', async () => {
+            reply = () => ({status: 502, raw: '<html>Bad Gateway</html>'});
+            const err = await newClient().getEvent({id: 'e1'}).then(() => undefined, (e) => e);
+            expect(err).to.be.instanceOf(StatusCodeError);
+            expect(err.statusCode).to.eq(502);
+            expect(err.error).to.eq('<html>Bad Gateway</html>');
         });
 
     });
