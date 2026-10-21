@@ -56,7 +56,6 @@
     "istanbul": "^0.4.5",
     "mocha": "^6.1.4",
     "moment": "^2.24.0",
-    "npm-install-peers": "^1.2.1",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.2",
     "sinon-chai": "^3.3.0",
@@ -66,6 +65,6 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "request-promise": "^4.2.6"
+    "request-promise": ">= 1.0.0"
   }
 }
