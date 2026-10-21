@@ -5,13 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
-## v2.1.1
+## v2.2.0
 
-[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.1.0...v2.1.1)
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.1.0...v2.2.0)
+
+### Added
+
+- `RequestError` and `StatusCodeError` are exported from the package root, so callers can check them with `instanceof`.
 
 ### Fixed
 
 - A response body that is not JSON no longer throws a `SyntaxError`. A non-2xx response still rejects with a `StatusCodeError`, and `error` holds the raw text (for example, a proxy's HTML error page). A 2xx response resolves with the raw text. This matches `request-promise` in v2.0.0.
+- A network failure (connection refused, DNS failure, reset) rejects with a `RequestError` instead of fetch's bare `TypeError: fetch failed`. Its `message` names the socket error (for example `connect ECONNREFUSED 127.0.0.1:3012`), as in v2.0.0. It also carries `cause`, `error` and the system `code`.
 
 ## v2.1.0
 
