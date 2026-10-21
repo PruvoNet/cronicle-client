@@ -5,6 +5,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v2.1.1
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.1.0...v2.1.1)
+
+### Fixed
+
+- A response body that is not JSON no longer throws a `SyntaxError`. A non-2xx response still rejects with a `StatusCodeError`, and `error` holds the raw text (for example, a proxy's HTML error page). A 2xx response resolves with the raw text. This matches `request-promise` in v2.0.0.
+
 ## v2.1.0
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v2.0.0...v2.1.0)

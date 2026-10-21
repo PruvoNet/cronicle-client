@@ -19,10 +19,10 @@ describe('http', () => {
         (global as any).fetch = realFetch;
     });
 
-    const respond = (status: number, body?: object) => fetchStub.resolves({
+    const respond = (status: number, body?: object | string) => fetchStub.resolves({
         ok: status >= 200 && status < 300,
         status,
-        text: () => Promise.resolve(body === undefined ? '' : JSON.stringify(body)),
+        text: () => Promise.resolve(body === undefined ? '' : typeof body === 'string' ? body : JSON.stringify(body)),
     });
 
     it('should send a JSON body and parse the JSON response', () => {
@@ -66,6 +66,22 @@ describe('http', () => {
                 expect(err.error).to.eql({message: 'down'});
                 expect(err.message).to.eq('503 - {"message":"down"}');
             });
+    });
+
+    it('should reject with StatusCodeError and the raw text when an error body is not JSON', () => {
+        respond(502, '<html>Bad Gateway</html>');
+        return requestJson({url: 'http://h/e', method: 'GET', headers: {}, json: true})
+            .then(() => expect.fail('should reject'), (err) => {
+                expect(err).to.be.instanceOf(StatusCodeError);
+                expect(err.statusCode).to.eq(502);
+                expect(err.error).to.eq('<html>Bad Gateway</html>');
+            });
+    });
+
+    it('should resolve with the raw text when a 2xx body is not JSON', () => {
+        respond(200, 'OK');
+        return requestJson({url: 'http://h/f', method: 'GET', headers: {}, json: true})
+            .then((resp) => expect(resp).to.eq('OK'));
     });
 
 });

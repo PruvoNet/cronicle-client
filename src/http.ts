@@ -21,6 +21,18 @@ export class StatusCodeError extends Error {
     }
 }
 
+// A body that is not JSON (e.g. a proxy's HTML error page) stays raw text, as with request-promise.
+const parseBody = (text: string): unknown => {
+    if (!text) {
+        return undefined;
+    }
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
+};
+
 /** Sends a JSON request with the global fetch (Node 18+) and resolves with the parsed JSON body. */
 export const requestJson = async (req: IJsonRequest): Promise<any> => {
     const headers: { [name: string]: string } = {...req.headers, Accept: 'application/json'};
@@ -31,7 +43,7 @@ export const requestJson = async (req: IJsonRequest): Promise<any> => {
     }
     const response = await fetch(req.url, init);
     const text = await response.text();
-    const body = text ? JSON.parse(text) : undefined;
+    const body = parseBody(text);
     if (!response.ok) {
         throw new StatusCodeError(response.status, body);
     }
