@@ -12,7 +12,7 @@ Light [Croncile](https://github.com/jhuckaby/Cronicle) node client with full Typ
 
 ## Main features
 - Fully typed api client for Cronicle
-- No dependencies (you need to install your own `request-promise` library)
+- No dependencies (uses the built-in `fetch` of Node 18+)
 - Helper methods to build Timing objects for scheduling events
 - Type safety extendable for Categories, Plugins and Targets
 
@@ -22,10 +22,7 @@ Light [Croncile](https://github.com/jhuckaby/Cronicle) node client with full Typ
 npm install cronicle-client
 ```
 
---NOTICE--  
-`request-promise` is a peer dependency and must be installed by you (>=1.0.0)
-
---NOTICE--  
+Requires Node 18 or later (built-in `fetch`). `request-promise` is no longer needed.  
 If you want to use the timing utils, you must also install `moment`
 
 ## Quick example

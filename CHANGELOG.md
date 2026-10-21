@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v2.1.0
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.0.0...v2.1.0)
+
+### Changed
+
+- HTTP calls use Node's built-in `fetch` instead of `request-promise` (deprecated, with 11 known advisories in its dependency tree). The package now has no runtime dependencies, and `request-promise` is no longer a peer dependency.
+- A non-2xx response still rejects with a `StatusCodeError` (`statusCode`, `error`), as before.
+
 ## v2.0.0
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v1.1.0...v2.0.0)
