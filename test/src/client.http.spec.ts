@@ -49,6 +49,8 @@ describe('CronicleClient over HTTP', () => {
                 const out = reply(entry);
                 res.statusCode = out.status || 200;
                 res.setHeader('Content-Type', 'application/json');
+                // Node 18's fetch keeps the socket for reuse, and its server.close() waits for idle sockets.
+                res.setHeader('Connection', 'close');
                 res.end(out.body === undefined ? '' : JSON.stringify(out.body));
             });
         });
