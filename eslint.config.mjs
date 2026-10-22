@@ -32,7 +32,7 @@ export default tseslint.config(
             '@stylistic/arrow-parens': ['error', 'always'],
             '@stylistic/no-trailing-spaces': 'error',
             '@stylistic/eol-last': 'error',
-            'eqeqeq': ['error', 'smart'],
+            'eqeqeq': ['error', 'always'],
             'curly': 'error',
             'prefer-const': 'error',
             'no-var': 'error',
