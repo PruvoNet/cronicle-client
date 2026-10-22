@@ -124,6 +124,20 @@ describe('CronicleClient over HTTP', () => {
             expect(received[0].url).to.eq('/api/app/get_event/v1');
         });
 
+        it('should encode query values so the server decodes them unchanged', async () => {
+            await newClient().getJobStatus({id: 'a b&c=d/é'});
+            expect(new URL(received[0].url, masterUrl).searchParams.get('id')).to.eq('a b&c=d/é');
+        });
+
+        it('should leave out undefined query values and an empty query', async () => {
+            await newClient().getSchedule({offset: 10, limit: undefined});
+            await newClient().getSchedule({});
+            expect(received.map((r) => r.url)).to.eql([
+                '/api/app/get_schedule/v1?offset=10',
+                '/api/app/get_schedule/v1',
+            ]);
+        });
+
     });
 
     describe('responses', () => {
