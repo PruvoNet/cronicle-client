@@ -1,0 +1,9 @@
+# Throwaway: proves the required zizmor check blocks a merge. Never merge this.
+name: zizmor gate test
+on: pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "gate test"
