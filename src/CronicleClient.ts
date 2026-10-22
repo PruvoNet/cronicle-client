@@ -1,6 +1,5 @@
 'use strict';
 
-import * as qs from 'querystring';
 import {CronicleError} from './CronicleError';
 import {IJsonRequest, requestJson} from './http';
 import {
@@ -151,7 +150,13 @@ export class CronicleClient<Categories extends string = BaseCategories,
     }
 
     private _getMethodUrl(operation: string, query?: IBodyOrQuery) {
-        const queryString = `${query ? '?' : ''}${query ? qs.stringify(query) : ''}`;
-        return `${this._baseUrl}/${operation}/v1${queryString}`;
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(query || {})) {
+            if (value !== undefined && value !== null) {
+                params.append(key, String(value));
+            }
+        }
+        const queryString = params.toString();
+        return `${this._baseUrl}/${operation}/v1${queryString ? `?${queryString}` : ''}`;
     }
 }
