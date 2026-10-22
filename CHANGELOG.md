@@ -3,11 +3,17 @@
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Development
+- nothing yet
+
+## v2.2.2
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.2.1...v2.2.2)
 
 ### Changed
 
 - GET query strings are built with `URLSearchParams` instead of the legacy `querystring` module. The server reads the same values. An `undefined` value is now left out instead of sent as `key=`, and an empty query no longer adds a bare `?`.
 - Removed the unused legacy `.eslintrc` and `.npmignore`. The published files are unchanged (`files` in `package.json` decides them).
+- The `LICENSE` file now holds the ISC text, matching `package.json` and every earlier npm release.
 
 ## v2.2.1
 
