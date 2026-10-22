@@ -1,12 +1,20 @@
 {
   "name": "cronicle-client",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Light Cronicle node client with full TypeScript support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",
   "engines": {
     "node": ">=18"
+  },
+  "peerDependencies": {
+    "moment": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "moment": {
+      "optional": true
+    }
   },
   "scripts": {
     "clean": "rm -rf node_modules build coverage dist",

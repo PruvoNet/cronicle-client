@@ -2,7 +2,7 @@
 
 import moment = require('moment');
 import * as timezoneMock from 'timezone-mock';
-import {afterAll, beforeAll, beforeEach, describe, expect, it, vi} from 'vitest';
+import {afterAll, beforeAll, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 import {
     BaseCategories,
     basePlugins,
@@ -29,6 +29,11 @@ const defaultVersion = 'v1';
 describe('cronicle client', () => {
 
     describe('timing helpers ', () => {
+
+        it('should accept a Moment in the public types', () => {
+            expectTypeOf(moment()).toExtend<Parameters<typeof getFutureTiming>[0]>();
+            expectTypeOf(moment.utc()).toExtend<Parameters<typeof getFutureUtcTiming>[0]>();
+        });
 
         describe('utc timing helpers ', () => {
 
