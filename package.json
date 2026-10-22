@@ -22,7 +22,7 @@
     "buildDist": "rm -rf dist/* && ./node_modules/.bin/tsc",
     "test": "npm run lint && npm run test:unit",
     "cover": "vitest run --coverage",
-    "lint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "eslint .",
     "test:unit": "tsc -p tsconfig.test.json && vitest run"
   },
   "repository": {
@@ -48,12 +48,15 @@
   },
   "homepage": "https://github.com/PruvoNet/cronicle-client#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^4.1.12",
+    "eslint": "^10.13.0",
     "moment": "^2.24.0",
     "timezone-mock": "^1.0.5",
-    "tslint": "^5.16.0",
     "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.0",
     "vitest": "^4.1.12"
   }
 }

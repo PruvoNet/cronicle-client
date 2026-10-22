@@ -1,7 +1,6 @@
 'use strict';
 
 import moment = require('moment');
-// @ts-ignore
 import * as timezoneMock from 'timezone-mock';
 import {afterAll, beforeAll, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 import {
