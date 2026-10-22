@@ -3,7 +3,11 @@
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Development
-- nothing yet
+
+### Changed
+
+- GET query strings are built with `URLSearchParams` instead of the legacy `querystring` module. The server reads the same values. An `undefined` value is now left out instead of sent as `key=`, and an empty query no longer adds a bare `?`.
+- Removed the unused legacy `.eslintrc` and `.npmignore`. The published files are unchanged (`files` in `package.json` decides them).
 
 ## v2.2.1
 
