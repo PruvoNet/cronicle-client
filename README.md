@@ -23,7 +23,7 @@ npm install cronicle-client
 ```
 
 Requires Node 18 or later (built-in `fetch`). `request-promise` is no longer needed.  
-If you want to use the timing utils, you must also install `moment`
+If you want to use the timing utils, you must also install `moment` (an optional peer dependency)
 
 ## Quick example
 

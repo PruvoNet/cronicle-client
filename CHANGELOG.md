@@ -5,6 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 - nothing yet
 
+## v2.2.1
+
+[diff](https://github.com/PruvoNet/cronicle-client/compare/v2.2.0...v2.2.1)
+
+### Fixed
+
+- The type declarations no longer import `moment`. A project without `moment` now type-checks with `skipLibCheck: false`. The timing helpers accept any `Moment` through the new `IMomentLike` type, plus `Date` and `string` as before.
+- `moment` is declared as an optional peer dependency. The timing helpers still need it at runtime; the rest of the client does not.
+
 ## v2.2.0
 
 [diff](https://github.com/PruvoNet/cronicle-client/compare/v2.1.0...v2.2.0)
