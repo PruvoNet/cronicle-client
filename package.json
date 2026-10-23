@@ -50,13 +50,13 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@types/node": "^20.19.43",
-    "@vitest/coverage-v8": "^4.1.12",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.13.0",
     "moment": "^2.24.0",
     "timezone-mock": "^1.0.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.72.0",
-    "vitest": "^4.1.12"
+    "vitest": "^5.0.5"
   }
 }
