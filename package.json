@@ -49,14 +49,14 @@
   "homepage": "https://github.com/PruvoNet/cronicle-client#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "@types/node": "^20.19.43",
-    "@vitest/coverage-v8": "^4.1.12",
+    "@stylistic/eslint-plugin": "^6.0.1",
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.1",
     "eslint": "^10.13.0",
     "moment": "^2.24.0",
     "timezone-mock": "^1.0.5",
-    "typescript": "~5.9.3",
+    "typescript": "~7.0.2",
     "typescript-eslint": "^8.72.0",
-    "vitest": "^4.1.12"
+    "vitest": "^5.1.1"
   }
 }
